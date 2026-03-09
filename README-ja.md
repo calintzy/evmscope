@@ -1,12 +1,12 @@
 # evmscope
 
-AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、トランザクション手数料、ウォレット残高、トランザクション解析、アドレス識別など9つのツールを提供する単一MCPサーバー。
+AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、承認状態、TVL、クジラ追跡など14のツールを提供する単一MCPサーバー。
 
 > 「AgentKitで実行し、evmscopeで判断する。」
 
 ## 特徴
 
-- **9つのツール** — 価格、手数料、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別
+- **14のツール** — 価格、Gas比較、スワップ見積もり、承認状態、TVL、クジラ追跡、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別
 - **5つのEVMチェーン** — Ethereum、Polygon、Arbitrum、Base、Optimism
 - **49の内蔵トークン** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPEなど
 - **30以上のラベル付きアドレス** — 取引所、DeFiプロトコル、ブリッジ、クジラウォレット
@@ -260,6 +260,123 @@ ENS名とアドレスを双方向で解決します（Ethereumメインネット
 }
 ```
 
+### compareGas
+
+5つのEVMチェーンのGas料金を一度に比較します。最安順にソート。
+
+```json
+// 入力
+{}
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "chains": [
+      { "chain": "base", "baseFeeGwei": "0.01", "estimatedCostUsd": 0.0001 },
+      { "chain": "arbitrum", "baseFeeGwei": "0.1", "estimatedCostUsd": 0.004 },
+      { "chain": "optimism", "baseFeeGwei": "0.05", "estimatedCostUsd": 0.002 },
+      { "chain": "polygon", "baseFeeGwei": "30.0", "estimatedCostUsd": 0.01 },
+      { "chain": "ethereum", "baseFeeGwei": "20.0", "estimatedCostUsd": 0.81 }
+    ],
+    "cheapest": "base",
+    "mostExpensive": "ethereum"
+  }
+}
+```
+
+### getApprovalStatus
+
+ERC-20トークンの承認（allowance）状態を照会します。主要DeFiプロトコルを自動チェック、リスクレベル判定。
+
+```json
+// 入力
+{ "owner": "0xd8dA...", "token": "USDC", "chain": "ethereum" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "owner": "0xd8dA...",
+    "token": "USDC",
+    "tokenAddress": "0xA0b8...",
+    "approvals": [
+      { "protocol": "Uniswap V3 (router)", "spender": "0xE592...", "allowance": "unlimited", "isUnlimited": true }
+    ],
+    "riskLevel": "moderate"
+  }
+}
+```
+
+### getProtocolTVL
+
+DeFiプロトコルのTVL（Total Value Locked）を照会します（DefiLlama基盤、チェーン別分布、24h/7d変動率）。
+
+```json
+// 入力
+{ "protocol": "Aave" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "protocol": "Aave",
+    "slug": "aave",
+    "totalTvlUsd": 12000000000,
+    "change24h": 1.5,
+    "change7d": -3.2,
+    "chainBreakdown": [
+      { "chain": "Ethereum", "tvlUsd": 8000000000, "percentage": 66.67 },
+      { "chain": "Polygon", "tvlUsd": 2000000000, "percentage": 16.67 }
+    ]
+  }
+}
+```
+
+### getWhaleMovements
+
+大規模トークン転送（クジラの動き）を追跡します。取引所入出金方向の判定、要約統計を含む。
+
+```json
+// 入力
+{ "token": "USDC", "chain": "ethereum", "minValueUsd": 100000, "limit": 10 }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "token": "USDC",
+    "tokenAddress": "0xA0b8...",
+    "movements": [
+      { "txHash": "0xabc...", "from": "0x1234...", "to": "0x28C6...", "fromLabel": null, "toLabel": "Binance Hot Wallet", "value": "500000.00", "valueUsd": 500000, "direction": "exchange_deposit", "timestamp": 1710000000 }
+    ],
+    "summary": { "totalMovements": 1, "totalValueUsd": 500000, "netExchangeFlow": 500000 }
+  }
+}
+```
+
+### getSwapQuote
+
+DEXスワップ見積もりを照会します（ParaSwap基盤、最適ルート、Gas費込み、ETH→WETH自動変換）。
+
+```json
+// 入力
+{ "tokenIn": "ETH", "tokenOut": "USDC", "amountIn": "1.0", "chain": "ethereum" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "tokenIn": { "symbol": "ETH", "address": "0xEeee...", "amount": "1.000000" },
+    "tokenOut": { "symbol": "USDC", "address": "0xA0b8...", "amount": "1929.200000" },
+    "exchangeRate": 1929.2,
+    "priceImpact": null,
+    "source": "UniswapV3",
+    "estimatedGasUsd": "3.50"
+  }
+}
+```
+
 ## サポートチェーン
 
 | チェーン | Chain ID | ネイティブトークン |
@@ -297,7 +414,7 @@ ENS名とアドレスを双方向で解決します（Ethereumメインネット
 
 - **v0.1**（完了）— 5つのツール：価格、トランザクション手数料、残高、トークン情報、ENS
 - **v0.5**（完了）— +4つのツール：decodeTx、getTxStatus、getContractABI、identifyAddress
-- **v1.0** — +5つのツール：getSwapQuote、getApprovalStatus、getProtocolTVL、compareGas、getWhaleMovements
+- **v1.0**（完了）— +5つのツール：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
 - **v1.5** — +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 
 ## ライセンス

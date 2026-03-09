@@ -2,13 +2,13 @@
 
 [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for token prices, transaction fees, wallet balances, transaction decoding, address identification, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 14 tools for token prices, gas comparison, swap quotes, approval status, protocol TVL, whale tracking, and more.
 
 > "AgentKit executes. evmscope decides."
 
 ## Features
 
-- **9 tools** — Price, transaction fees, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
+- **14 tools** — Price, gas compare, swap quote, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
 - **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
 - **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
@@ -262,6 +262,123 @@ Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
 }
 ```
 
+### compareGas
+
+Compare gas fees across all 5 EVM chains at once, sorted by lowest cost.
+
+```json
+// Input
+{}
+
+// Output
+{
+  "success": true,
+  "data": {
+    "chains": [
+      { "chain": "base", "baseFeeGwei": "0.01", "estimatedCostUsd": 0.0001 },
+      { "chain": "arbitrum", "baseFeeGwei": "0.1", "estimatedCostUsd": 0.004 },
+      { "chain": "optimism", "baseFeeGwei": "0.05", "estimatedCostUsd": 0.002 },
+      { "chain": "polygon", "baseFeeGwei": "30.0", "estimatedCostUsd": 0.01 },
+      { "chain": "ethereum", "baseFeeGwei": "20.0", "estimatedCostUsd": 0.81 }
+    ],
+    "cheapest": "base",
+    "mostExpensive": "ethereum"
+  }
+}
+```
+
+### getApprovalStatus
+
+Check ERC-20 token approval (allowance) status. Auto-checks major DeFi protocols with risk level assessment.
+
+```json
+// Input
+{ "owner": "0xd8dA...", "token": "USDC", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "owner": "0xd8dA...",
+    "token": "USDC",
+    "tokenAddress": "0xA0b8...",
+    "approvals": [
+      { "protocol": "Uniswap V3 (router)", "spender": "0xE592...", "allowance": "unlimited", "isUnlimited": true }
+    ],
+    "riskLevel": "moderate"
+  }
+}
+```
+
+### getProtocolTVL
+
+Get DeFi protocol TVL (Total Value Locked) via DefiLlama — chain breakdown, 24h/7d changes.
+
+```json
+// Input
+{ "protocol": "Aave" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "protocol": "Aave",
+    "slug": "aave",
+    "totalTvlUsd": 12000000000,
+    "change24h": 1.5,
+    "change7d": -3.2,
+    "chainBreakdown": [
+      { "chain": "Ethereum", "tvlUsd": 8000000000, "percentage": 66.67 },
+      { "chain": "Polygon", "tvlUsd": 2000000000, "percentage": 16.67 }
+    ]
+  }
+}
+```
+
+### getWhaleMovements
+
+Track large token transfers (whale movements). Classifies exchange deposit/withdrawal direction.
+
+```json
+// Input
+{ "token": "USDC", "chain": "ethereum", "minValueUsd": 100000, "limit": 10 }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "token": "USDC",
+    "tokenAddress": "0xA0b8...",
+    "movements": [
+      { "txHash": "0xabc...", "from": "0x1234...", "to": "0x28C6...", "fromLabel": null, "toLabel": "Binance Hot Wallet", "value": "500000.00", "valueUsd": 500000, "direction": "exchange_deposit", "timestamp": 1710000000 }
+    ],
+    "summary": { "totalMovements": 1, "totalValueUsd": 500000, "netExchangeFlow": 500000 }
+  }
+}
+```
+
+### getSwapQuote
+
+Get DEX swap quotes via ParaSwap — optimal route, gas cost, auto ETH→WETH conversion.
+
+```json
+// Input
+{ "tokenIn": "ETH", "tokenOut": "USDC", "amountIn": "1.0", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "tokenIn": { "symbol": "ETH", "address": "0xEeee...", "amount": "1.000000" },
+    "tokenOut": { "symbol": "USDC", "address": "0xA0b8...", "amount": "1929.200000" },
+    "exchangeRate": 1929.2,
+    "priceImpact": null,
+    "source": "UniswapV3",
+    "estimatedGasUsd": "3.50"
+  }
+}
+```
+
 ## Supported Chains
 
 | Chain | Chain ID | Native Token |
@@ -299,7 +416,7 @@ All environment variables are optional. evmscope works without any configuration
 
 - **v0.1** (done) — 5 tools: price, transaction fees, balance, token info, ENS
 - **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
-- **v1.0** — +5 tools: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
+- **v1.0** (done) — +5 tools: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
 - **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 
 ## License

@@ -10,10 +10,15 @@ import { register as registerGetTxStatus } from "./tools/getTxStatus.js";
 import { register as registerDecodeTx } from "./tools/decodeTx.js";
 import { register as registerGetContractABI } from "./tools/getContractABI.js";
 import { register as registerIdentifyAddress } from "./tools/identifyAddress.js";
+import { register as registerCompareGas } from "./tools/compareGas.js";
+import { register as registerGetApprovalStatus } from "./tools/getApprovalStatus.js";
+import { register as registerGetProtocolTVL } from "./tools/getProtocolTVL.js";
+import { register as registerGetWhaleMovements } from "./tools/getWhaleMovements.js";
+import { register as registerGetSwapQuote } from "./tools/getSwapQuote.js";
 
 const server = new McpServer({
   name: "evmscope",
-  version: "0.5.0",
+  version: "1.0.0",
 });
 
 // Phase 1 (MVP)
@@ -28,6 +33,13 @@ registerGetTxStatus(server);
 registerDecodeTx(server);
 registerGetContractABI(server);
 registerIdentifyAddress(server);
+
+// Phase 3 (v1.0)
+registerCompareGas(server);
+registerGetApprovalStatus(server);
+registerGetProtocolTVL(server);
+registerGetWhaleMovements(server);
+registerGetSwapQuote(server);
 
 async function main() {
   const transport = new StdioServerTransport();

@@ -144,6 +144,56 @@ export async function getABI(address: string, chain: SupportedChain): Promise<AB
   return null;
 }
 
+export interface TokenTransfer {
+  hash: string;
+  from: string;
+  to: string;
+  value: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimal: string;
+  timeStamp: string;
+}
+
+/** Etherscan에서 최근 토큰 전송 조회 */
+export async function getTokenTransfers(
+  contractAddress: string,
+  chain: SupportedChain,
+  limit: number = 100,
+): Promise<TokenTransfer[]> {
+  const baseUrl = EXPLORER_API_URLS[chain];
+  if (!baseUrl) return [];
+
+  const apiKey = getApiKey(chain);
+  const cacheKey = `tokentx:${chain}:${contractAddress.toLowerCase()}:${limit}`;
+  const cached = cache.get<TokenTransfer[]>(cacheKey);
+  if (cached.hit) return cached.data;
+
+  const params = new URLSearchParams({
+    module: "account",
+    action: "tokentx",
+    contractaddress: contractAddress,
+    page: "1",
+    offset: String(limit),
+    sort: "desc",
+    ...(apiKey ? { apikey: apiKey } : {}),
+  });
+
+  try {
+    const res = await fetch(`${baseUrl}?${params}`);
+    if (!res.ok) return [];
+
+    const json = (await res.json()) as { status: string; result: TokenTransfer[] };
+    if (json.status === "1" && Array.isArray(json.result)) {
+      cache.set(cacheKey, json.result, 60);
+      return json.result;
+    }
+  } catch {
+    // 무시
+  }
+  return [];
+}
+
 /** 4byte.directory에서 함수 시그니처 조회 */
 export async function lookup4byte(selector: string): Promise<string | null> {
   const cacheKey = `4byte:${selector}`;
