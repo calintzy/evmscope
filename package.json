@@ -11,6 +11,7 @@
     "crypto",
     "defi"
   ],
+  "type": "module",
   "bin": {
     "evmscope": "./dist/index.js"
   },
@@ -45,6 +46,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ryan/evmscope"
+    "url": "https://github.com/calintzy/evmscope"
   }
 }
