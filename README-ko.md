@@ -1,22 +1,20 @@
 # evmscope
 
-[한국어](README-ko.md)
+AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 가격, 가스, 잔고, 트랜잭션 해석, 주소 식별 등 9개 도구를 제공하는 단일 MCP 서버.
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for price, gas, balance, transaction decoding, address identification, and more.
+> "AgentKit으로 실행하고, evmscope로 판단하세요."
 
-> "AgentKit executes. evmscope decides."
+## 특징
 
-## Features
+- **9개 도구** — 가격, 가스, 잔고, 토큰 정보, ENS, TX 상태, TX 해석, ABI 조회, 주소 식별
+- **5개 EVM 체인** — Ethereum, Polygon, Arbitrum, Base, Optimism
+- **49개 내장 토큰** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE 등
+- **30+ 라벨링 주소** — 거래소, DeFi 프로토콜, 브릿지, 고래 지갑
+- **제로 설정** — API 키 불필요. 무료 공개 API로 즉시 동작
+- **읽기 전용** — 트랜잭션 실행 기능 없음. 자금 손실 위험 제로
+- **내장 폴백** — 토큰/시그니처/라벨 내장 DB로 오프라인 동작 가능
 
-- **9 tools** — Price, gas, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
-- **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
-- **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
-- **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
-- **Zero config** — No API keys required. Works out of the box with free public APIs
-- **Read-only** — No transaction execution. Zero risk of fund loss
-- **Built-in fallbacks** — Embedded token/signature/label databases for offline operation
-
-## Quick Start
+## 빠른 시작
 
 ```bash
 npx evmscope
@@ -24,7 +22,7 @@ npx evmscope
 
 ### Claude Desktop
 
-Add to `claude_desktop_config.json`:
+`claude_desktop_config.json`에 추가:
 
 ```json
 {
@@ -39,7 +37,7 @@ Add to `claude_desktop_config.json`:
 
 ### Cursor
 
-Add to `.cursor/mcp.json`:
+`.cursor/mcp.json`에 추가:
 
 ```json
 {
@@ -52,17 +50,17 @@ Add to `.cursor/mcp.json`:
 }
 ```
 
-## Tools
+## 도구
 
 ### getTokenPrice
 
-Get current token price, 24h change, market cap, and volume.
+토큰 현재 가격, 24시간 변동률, 시가총액, 거래량을 조회합니다.
 
 ```json
-// Input
+// 입력
 { "token": "ETH", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -78,13 +76,13 @@ Get current token price, 24h change, market cap, and volume.
 
 ### getGasPrice
 
-Get current gas prices in slow/normal/fast tiers with USD estimates.
+현재 가스비를 slow/normal/fast 3단계로 USD 예상 비용과 함께 조회합니다.
 
 ```json
-// Input
+// 입력
 { "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -99,13 +97,13 @@ Get current gas prices in slow/normal/fast tiers with USD estimates.
 
 ### getBalance
 
-Get native token + ERC-20 token balances with USD values.
+네이티브 토큰 + ERC-20 토큰 잔고를 USD 환산 가치와 함께 조회합니다.
 
 ```json
-// Input
+// 입력
 { "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -121,13 +119,13 @@ Get native token + ERC-20 token balances with USD values.
 
 ### getTokenInfo
 
-Get ERC-20 token metadata (name, symbol, decimals, total supply).
+ERC-20 토큰 메타데이터(이름, 심볼, 소수점, 총공급량)를 조회합니다.
 
 ```json
-// Input
+// 입력
 { "token": "USDC", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -142,13 +140,13 @@ Get ERC-20 token metadata (name, symbol, decimals, total supply).
 
 ### resolveENS
 
-Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
+ENS 이름 <-> 주소를 양방향으로 해석합니다 (Ethereum mainnet 전용).
 
 ```json
-// Input
+// 입력
 { "nameOrAddress": "vitalik.eth" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -162,13 +160,13 @@ Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
 
 ### getTxStatus
 
-Get transaction status, receipt, confirmations, and gas usage.
+트랜잭션 상태, receipt, confirmations, 가스 사용량을 조회합니다.
 
 ```json
-// Input
+// 입력
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -188,13 +186,13 @@ Get transaction status, receipt, confirmations, and gas usage.
 
 ### decodeTx
 
-Decode a transaction into structured JSON — function name, parameters, event logs.
+트랜잭션을 구조화된 JSON으로 해석합니다 — 함수명, 파라미터, 이벤트 로그.
 
 ```json
-// Input
+// 입력
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -219,13 +217,13 @@ Decode a transaction into structured JSON — function name, parameters, event l
 
 ### getContractABI
 
-Look up a verified contract's ABI (Etherscan → Sourcify fallback).
+검증된 컨트랙트의 ABI를 조회합니다 (Etherscan -> Sourcify 폴백).
 
 ```json
-// Input
+// 입력
 { "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -242,13 +240,13 @@ Look up a verified contract's ABI (Etherscan → Sourcify fallback).
 
 ### identifyAddress
 
-Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
+주소를 식별합니다 — 거래소, DeFi 프로토콜, 고래 지갑, EOA 분류.
 
 ```json
-// Input
+// 입력
 { "address": "0x28C6c06298d514Db089934071355E5743bf21d60", "chain": "ethereum" }
 
-// Output
+// 출력
 {
   "success": true,
   "data": {
@@ -262,46 +260,46 @@ Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
 }
 ```
 
-## Supported Chains
+## 지원 체인
 
-| Chain | Chain ID | Native Token |
-|-------|----------|-------------|
+| 체인 | Chain ID | 네이티브 토큰 |
+|------|----------|--------------|
 | Ethereum | 1 | ETH |
 | Polygon | 137 | POL |
 | Arbitrum | 42161 | ETH |
 | Base | 8453 | ETH |
 | Optimism | 10 | ETH |
 
-## Environment Variables (Optional)
+## 환경변수 (선택사항)
 
-All environment variables are optional. evmscope works without any configuration.
+모든 환경변수는 선택사항입니다. evmscope는 설정 없이 즉시 동작합니다.
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `EVMSCOPE_RPC_URL` | Custom RPC endpoint | Public RPC |
-| `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
-| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
-| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
+| 변수 | 용도 | 기본값 |
+|------|------|--------|
+| `EVMSCOPE_RPC_URL` | 커스텀 RPC 엔드포인트 | 공개 RPC |
+| `EVMSCOPE_COINGECKO_KEY` | CoinGecko API 키 (높은 Rate Limit) | 무료 티어 |
+| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API 키 (높은 Rate Limit) | 무료 티어 |
+| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API 키 | ETHERSCAN_KEY 폴백 |
+| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API 키 | ETHERSCAN_KEY 폴백 |
+| `EVMSCOPE_BASESCAN_KEY` | Basescan API 키 | ETHERSCAN_KEY 폴백 |
+| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 키 | ETHERSCAN_KEY 폴백 |
 
-## Built-in Databases
+## 내장 데이터베이스
 
-| Database | Contents |
-|----------|----------|
-| `tokens.json` | 49 major tokens with multi-chain addresses and CoinGecko IDs |
-| `signatures.json` | 36 common function signatures (ERC-20, DEX, lending, NFT) |
-| `labels.json` | 30 labeled addresses (exchanges, bridges, whale wallets) |
-| `protocols.json` | 10 DeFi protocols with multi-chain contract addresses |
+| 데이터베이스 | 내용 |
+|-------------|------|
+| `tokens.json` | 49개 주요 토큰 — 멀티체인 주소 + CoinGecko ID |
+| `signatures.json` | 36개 함수 시그니처 — ERC-20, DEX, 렌딩, NFT |
+| `labels.json` | 30개 라벨링 주소 — 거래소, 브릿지, 고래 지갑 |
+| `protocols.json` | 10개 DeFi 프로토콜 — 멀티체인 컨트랙트 주소 |
 
-## Roadmap
+## 로드맵
 
-- **v0.1** (done) — 5 tools: price, gas, balance, token info, ENS
-- **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
-- **v1.0** — +5 tools: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
-- **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v0.1** (완료) — 5개 도구: 가격, 가스, 잔고, 토큰 정보, ENS
+- **v0.5** (완료) — +4개 도구: decodeTx, getTxStatus, getContractABI, identifyAddress
+- **v1.0** — +5개 도구: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
+- **v1.5** — +6개 도구: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 
-## License
+## 라이선스
 
 [MIT](LICENSE)
