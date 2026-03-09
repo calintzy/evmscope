@@ -35,7 +35,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
   if (!token.startsWith("0x") || token.length !== 42) {
     const meta = resolveTokenMeta(token, chain);
     if (!meta) return makeError(`Token '${token}' not found`, "TOKEN_NOT_FOUND");
-    const addresses = meta.addresses as Record<string, string>;
+    const addresses = meta.addresses;
     tokenAddress = addresses[chain];
     if (!tokenAddress) return makeError(`Token '${token}' not available on ${chain}`, "TOKEN_NOT_FOUND");
   }

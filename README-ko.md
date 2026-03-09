@@ -531,7 +531,12 @@ DeFi 수익률(APY)을 조회합니다 (DefiLlama 기반, 프로토콜/체인별
 
 | 변수 | 용도 | 기본값 |
 |------|------|--------|
-| `EVMSCOPE_RPC_URL` | 커스텀 RPC 엔드포인트 | 공개 RPC |
+| `EVMSCOPE_RPC_URL` | 커스텀 RPC 엔드포인트 (전체 체인) | 공개 RPC |
+| `EVMSCOPE_RPC_URL_ETHEREUM` | Ethereum 전용 RPC 엔드포인트 | RPC_URL 폴백 |
+| `EVMSCOPE_RPC_URL_POLYGON` | Polygon 전용 RPC 엔드포인트 | RPC_URL 폴백 |
+| `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum 전용 RPC 엔드포인트 | RPC_URL 폴백 |
+| `EVMSCOPE_RPC_URL_BASE` | Base 전용 RPC 엔드포인트 | RPC_URL 폴백 |
+| `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism 전용 RPC 엔드포인트 | RPC_URL 폴백 |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API 키 (높은 Rate Limit) | 무료 티어 |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API 키 (높은 Rate Limit) | 무료 티어 |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API 키 | ETHERSCAN_KEY 폴백 |
@@ -540,6 +545,7 @@ DeFi 수익률(APY)을 조회합니다 (DefiLlama 기반, 프로토콜/체인별
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 키 | ETHERSCAN_KEY 폴백 |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API 키 (토큰 홀더) | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI API 키 (브릿지 경로) | 공개 접근 |
+| `EVMSCOPE_DEBUG` | 디버그 로깅 활성화 (`1`로 설정) | 비활성 |
 
 ## 내장 데이터베이스
 
@@ -556,6 +562,7 @@ DeFi 수익률(APY)을 조회합니다 (DefiLlama 기반, 프로토콜/체인별
 - **v0.5** (완료) — +4개 도구: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** (완료) — +5개 도구: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
 - **v1.5** (완료) — +6개 도구: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v1.5.1** (완료) — 코드 품질 + 보안 리팩토링: 7개 신규 공유 모듈, 체인별 RPC URL, 캐시 크기 상한, 주소 검증 통일, CLI 모듈화
 
 ## 라이선스
 

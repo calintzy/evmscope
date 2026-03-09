@@ -21,10 +21,11 @@ import { register as registerGetTokenHolders } from "./tools/getTokenHolders.js"
 import { register as registerSimulateTx } from "./tools/simulateTx.js";
 import { register as registerCheckHoneypot } from "./tools/checkHoneypot.js";
 import { register as registerGetBridgeRoutes } from "./tools/getBridgeRoutes.js";
+import { VERSION } from "./shared/constants.js";
 
 const server = new McpServer({
   name: "evmscope",
-  version: "1.5.0",
+  version: VERSION,
 });
 
 // Phase 1 (MVP)

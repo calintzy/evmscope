@@ -6,7 +6,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { getPrice } from "../shared/coingecko.js";
-import chainsData from "../data/chains.json" with { type: "json" };
+import { getNativeCoingeckoId } from "../shared/chains.js";
 
 interface ChainGas {
   chain: SupportedChain;
@@ -32,7 +32,7 @@ async function fetchChainGas(chain: SupportedChain): Promise<ChainGas> {
 
   let nativePriceUsd = 0;
   try {
-    const nativeId = (chainsData as Record<string, { nativeCurrency: { coingeckoId: string } }>)[chain]?.nativeCurrency?.coingeckoId;
+    const nativeId = getNativeCoingeckoId(chain);
     if (nativeId) {
       const priceData = await getPrice(nativeId);
       nativePriceUsd = priceData.priceUsd;

@@ -1,15 +1,9 @@
 import { cache } from "./cache.js";
+import { CHAIN_IDS } from "./constants.js";
+import { logCatchError } from "./logger.js";
 
 const BASE_URL = "https://li.quest/v1";
 const BRIDGE_CACHE_TTL = 60; // 1분
-
-const CHAIN_IDS: Record<string, number> = {
-  ethereum: 1,
-  polygon: 137,
-  arbitrum: 42161,
-  base: 8453,
-  optimism: 10,
-};
 
 export interface BridgeRoute {
   bridge: string;
@@ -32,8 +26,8 @@ export async function fetchBridgeRoutes(
   toToken: string,
   amount: string,
 ): Promise<BridgeRoutesResult | null> {
-  const fromChainId = CHAIN_IDS[fromChain];
-  const toChainId = CHAIN_IDS[toChain];
+  const fromChainId = CHAIN_IDS[fromChain as keyof typeof CHAIN_IDS];
+  const toChainId = CHAIN_IDS[toChain as keyof typeof CHAIN_IDS];
   if (!fromChainId || !toChainId) return null;
 
   const cacheKey = `lifi:${fromChain}:${toChain}:${fromToken}:${amount}`;
@@ -106,7 +100,8 @@ export async function fetchBridgeRoutes(
     const result: BridgeRoutesResult = { routes };
     cache.set(cacheKey, result, BRIDGE_CACHE_TTL);
     return result;
-  } catch {
+  } catch (err) {
+    logCatchError("lifi", err);
     return null;
   }
 }

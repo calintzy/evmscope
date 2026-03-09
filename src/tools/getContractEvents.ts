@@ -6,6 +6,9 @@ import { getClient } from "../shared/rpc-client.js";
 import { getABI } from "../shared/etherscan.js";
 import { cache } from "../shared/cache.js";
 import { decodeEventLog, type Abi } from "viem";
+import { serializeArg } from "../shared/serialize.js";
+import { isValidAddress } from "../shared/validate.js";
+import { MAX_BLOCK_RANGE } from "../shared/validate.js";
 
 interface EventData {
   name: string | null;
@@ -30,25 +33,10 @@ const inputSchema = z.object({
   limit: z.number().optional().default(20).describe("최대 이벤트 수 (기본 20)"),
 });
 
-/** BigInt 등 직렬화 불가 타입 변환 */
-function serializeArgs(args: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(args)) {
-    if (typeof value === "bigint") {
-      result[key] = value.toString();
-    } else if (Array.isArray(value)) {
-      result[key] = value.map((v) => (typeof v === "bigint" ? v.toString() : v));
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
 async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<ContractEventsData>> {
   const { address, chain, limit } = args;
 
-  if (!address.startsWith("0x") || address.length !== 42) {
+  if (!isValidAddress(address)) {
     return makeError("Invalid address format", "INVALID_INPUT");
   }
 
@@ -59,7 +47,10 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Co
   try {
     const client = getClient(chain);
     const latestBlock = await client.getBlockNumber();
-    const fromBlock = args.fromBlock ? BigInt(args.fromBlock) : latestBlock - 1000n;
+    const requestedFrom = args.fromBlock ? BigInt(args.fromBlock) : latestBlock - 1000n;
+    const fromBlock = latestBlock - requestedFrom > BigInt(MAX_BLOCK_RANGE)
+      ? latestBlock - BigInt(MAX_BLOCK_RANGE)
+      : requestedFrom;
     const toBlock = latestBlock;
 
     // 로그 조회
@@ -92,7 +83,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Co
           });
           name = decoded.eventName ?? null;
           decodedArgs = decoded.args
-            ? serializeArgs(decoded.args as unknown as Record<string, unknown>)
+            ? serializeArg(decoded.args) as Record<string, unknown>
             : null;
         } catch {
           // 디코딩 실패 시 raw 유지

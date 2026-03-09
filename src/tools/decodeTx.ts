@@ -8,6 +8,7 @@ import { getClient } from "../shared/rpc-client.js";
 import { getABI, lookup4byte } from "../shared/etherscan.js";
 import { cache } from "../shared/cache.js";
 import signaturesData from "../data/signatures.json" with { type: "json" };
+import { serializeArg } from "../shared/serialize.js";
 
 interface DecodedFunction {
   name: string;
@@ -216,18 +217,6 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<De
     }
     return makeError(`Failed to decode transaction: ${message}`, "RPC_ERROR");
   }
-}
-
-/** BigInt 등을 JSON 직렬화 가능하게 변환 */
-function serializeArg(value: unknown): unknown {
-  if (typeof value === "bigint") return value.toString();
-  if (Array.isArray(value)) return value.map(serializeArg);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, serializeArg(v)])
-    );
-  }
-  return value;
 }
 
 export function register(server: McpServer) {

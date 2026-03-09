@@ -1,17 +1,10 @@
 import { cache } from "./cache.js";
 import type { SupportedChain } from "../types.js";
+import { CHAIN_IDS } from "./constants.js";
+import { sanitizeError } from "./validate.js";
 
 const PARASWAP_BASE = "https://apiv5.paraswap.io";
 const QUOTE_CACHE_TTL = 15;
-
-// ParaSwap 체인 ID 매핑
-const CHAIN_IDS: Record<SupportedChain, number> = {
-  ethereum: 1,
-  polygon: 137,
-  arbitrum: 42161,
-  base: 8453,
-  optimism: 10,
-};
 
 export interface ParaswapQuote {
   srcToken: string;
@@ -69,7 +62,7 @@ export async function fetchQuote(
   const res = await fetch(`${PARASWAP_BASE}/prices?${params}`);
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`ParaSwap API error: ${res.status} - ${body}`);
+    throw new Error(`ParaSwap API error: ${res.status}`);
   }
 
   const json = (await res.json()) as PriceRouteResponse;

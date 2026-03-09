@@ -1,15 +1,9 @@
 import { cache } from "./cache.js";
+import { CHAIN_IDS } from "./constants.js";
+import { logCatchError } from "./logger.js";
 
 const BASE_URL = "https://api.honeypot.is/v2";
 const HONEYPOT_CACHE_TTL = 3600; // 1시간
-
-const CHAIN_IDS: Record<string, number> = {
-  ethereum: 1,
-  polygon: 137,
-  arbitrum: 42161,
-  base: 8453,
-  optimism: 10,
-};
 
 export interface HoneypotResult {
   isHoneypot: boolean;
@@ -27,7 +21,7 @@ export async function checkHoneypotToken(
   tokenAddress: string,
   chain: string,
 ): Promise<HoneypotResult | null> {
-  const chainId = CHAIN_IDS[chain];
+  const chainId = CHAIN_IDS[chain as keyof typeof CHAIN_IDS];
   if (!chainId) return null;
 
   const cacheKey = `honeypot:${chain}:${tokenAddress.toLowerCase()}`;
@@ -80,7 +74,8 @@ export async function checkHoneypotToken(
 
     cache.set(cacheKey, result, HONEYPOT_CACHE_TTL);
     return result;
-  } catch {
+  } catch (err) {
+    logCatchError("honeypot", err);
     return null;
   }
 }

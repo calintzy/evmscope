@@ -6,8 +6,8 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { getPrice, resolveCoingeckoId } from "../shared/coingecko.js";
-import tokensData from "../data/tokens.json" with { type: "json" };
-import chainsData from "../data/chains.json" with { type: "json" };
+import { tokens as tokensData } from "../shared/tokens.js";
+import { chains } from "../shared/chains.js";
 
 interface TokenBalance {
   symbol: string;
@@ -62,7 +62,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ba
 
   try {
     const client = getClient(chain);
-    const chainConfig = (chainsData as Record<string, { nativeCurrency: { symbol: string; decimals: number; coingeckoId: string } }>)[chain];
+    const chainConfig = chains[chain];
 
     // 네이티브 잔고 조회
     const nativeBalanceWei = await client.getBalance({ address: address as Address });
@@ -90,7 +90,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ba
       );
       if (!tokenInfo) continue;
 
-      const tokenAddress = (tokenInfo.addresses as Record<string, string>)[chain];
+      const tokenAddress = tokenInfo.addresses[chain];
       if (!tokenAddress) continue;
 
       try {

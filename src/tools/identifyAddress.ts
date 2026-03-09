@@ -5,7 +5,7 @@ import { makeSuccess, makeError, isSupportedChain } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
-import labelsData from "../data/labels.json" with { type: "json" };
+import { findLabel } from "../shared/labels.js";
 import protocolsData from "../data/protocols.json" with { type: "json" };
 
 interface IdentifyData {
@@ -24,17 +24,6 @@ const inputSchema = z.object({
   address: z.string().describe("이더리움 주소 (0x...)"),
   chain: z.string().default("ethereum").describe("체인 (ethereum, polygon, arbitrum, base, optimism)"),
 });
-
-/** labels.json에서 주소 라벨 조회 */
-function findLabel(address: string): { label: string; category: string; tags: string[] } | null {
-  const addr = address.toLowerCase();
-  for (const entry of labelsData) {
-    if (entry.address.toLowerCase() === addr) {
-      return { label: entry.label, category: entry.category, tags: entry.tags };
-    }
-  }
-  return null;
-}
 
 /** protocols.json에서 프로토콜 이름 조회 */
 function findProtocol(address: string, chain: string): { name: string; category: string; role: string } | null {

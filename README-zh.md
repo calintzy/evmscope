@@ -473,7 +473,12 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
 | 变量 | 用途 | 默认值 |
 |------|------|--------|
-| `EVMSCOPE_RPC_URL` | 自定义 RPC 端点 | 公共 RPC |
+| `EVMSCOPE_RPC_URL` | 自定义 RPC 端点（所有链） | 公共 RPC |
+| `EVMSCOPE_RPC_URL_ETHEREUM` | Ethereum 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_POLYGON` | Polygon 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_BASE` | Base 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism 专用 RPC 端点 | 回退至 RPC_URL |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API 密钥（更高速率限制） | 免费层 |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API 密钥（更高速率限制） | 免费层 |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API 密钥 | 回退至 ETHERSCAN_KEY |
@@ -482,6 +487,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API 密钥（代币持有者） | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI API 密钥（跨链桥路线） | 公共访问 |
+| `EVMSCOPE_DEBUG` | 启用调试日志（设为 `1`） | 禁用 |
 
 ## 内置数据库
 
@@ -498,6 +504,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 - **v0.5**（已完成）— +4 个工具：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0**（已完成）— +5 个工具：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
 - **v1.5**（已完成）— +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
+- **v1.5.1**（已完成）— 代码质量 + 安全重构：7 个新共享模块、链级 RPC URL、缓存大小限制、统一地址验证、CLI 模块化
 
 ## 许可证
 

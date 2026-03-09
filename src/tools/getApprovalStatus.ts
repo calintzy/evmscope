@@ -5,6 +5,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
+import { isValidAddress } from "../shared/validate.js";
 import protocolsData from "../data/protocols.json" with { type: "json" };
 
 // ERC-20 allowance ABI
@@ -65,10 +66,10 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ap
 
   // 토큰 주소 확인
   let tokenAddress = token;
-  if (!token.startsWith("0x") || token.length !== 42) {
+  if (!isValidAddress(token)) {
     const meta = resolveTokenMeta(token, chain);
     if (!meta) return makeError(`Token '${token}' not found on ${chain}`, "TOKEN_NOT_FOUND");
-    const addresses = meta.addresses as Record<string, string>;
+    const addresses = meta.addresses;
     const addr = addresses[chain];
     if (!addr) return makeError(`Token '${token}' not available on ${chain}`, "TOKEN_NOT_FOUND");
     tokenAddress = addr;

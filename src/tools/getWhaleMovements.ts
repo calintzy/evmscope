@@ -5,7 +5,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { cache } from "../shared/cache.js";
 import { getTokenTransfers } from "../shared/etherscan.js";
 import { resolveTokenMeta, resolveCoingeckoId, getPrice } from "../shared/coingecko.js";
-import labelsData from "../data/labels.json" with { type: "json" };
+import { getLabel, isExchangeAddress } from "../shared/labels.js";
 
 interface Movement {
   txHash: string;
@@ -41,22 +41,6 @@ const inputSchema = z.object({
   limit: z.number().default(10).describe("반환할 최대 이동 수 (기본: 10)"),
 });
 
-function getLabel(address: string): string | null {
-  const lower = address.toLowerCase();
-  for (const entry of labelsData as Array<{ address: string; label: string }>) {
-    if (entry.address.toLowerCase() === lower) return entry.label;
-  }
-  return null;
-}
-
-function isExchangeAddress(address: string): boolean {
-  const lower = address.toLowerCase();
-  for (const entry of labelsData as Array<{ address: string; category: string }>) {
-    if (entry.address.toLowerCase() === lower && entry.category === "exchange") return true;
-  }
-  return false;
-}
-
 function classifyDirection(from: string, to: string): Movement["direction"] {
   const fromExchange = isExchangeAddress(from);
   const toExchange = isExchangeAddress(to);
@@ -75,7 +59,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Wh
   if (!token.startsWith("0x") || token.length !== 42) {
     const meta = resolveTokenMeta(token, chain);
     if (!meta) return makeError(`Token '${token}' not found on ${chain}`, "TOKEN_NOT_FOUND");
-    const addresses = meta.addresses as Record<string, string>;
+    const addresses = meta.addresses;
     const addr = addresses[chain];
     if (!addr) return makeError(`Token '${token}' not available on ${chain}`, "TOKEN_NOT_FOUND");
     tokenAddress = addr;

@@ -6,7 +6,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { getPrice, resolveCoingeckoId } from "../shared/coingecko.js";
-import chainsData from "../data/chains.json" with { type: "json" };
+import { getNativeCoingeckoId } from "../shared/chains.js";
 
 interface GasEstimate {
   maxFeePerGas: string;
@@ -56,7 +56,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ga
 
     let ethPriceUsd = 0;
     try {
-      const nativeCoingeckoId = (chainsData as Record<string, { nativeCurrency: { coingeckoId: string } }>)[chain]?.nativeCurrency?.coingeckoId;
+      const nativeCoingeckoId = getNativeCoingeckoId(chain);
       if (nativeCoingeckoId) {
         const priceData = await getPrice(nativeCoingeckoId);
         ethPriceUsd = priceData.priceUsd;

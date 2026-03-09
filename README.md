@@ -536,7 +536,12 @@ All environment variables are optional. evmscope works without any configuration
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `EVMSCOPE_RPC_URL` | Custom RPC endpoint | Public RPC |
+| `EVMSCOPE_RPC_URL` | Custom RPC endpoint (all chains) | Public RPC |
+| `EVMSCOPE_RPC_URL_ETHEREUM` | Ethereum-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_POLYGON` | Polygon-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_BASE` | Base-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism-specific RPC endpoint | Falls back to RPC_URL |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
@@ -545,6 +550,7 @@ All environment variables are optional. evmscope works without any configuration
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API key (token holders) | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI API key (bridge routes) | Public access |
+| `EVMSCOPE_DEBUG` | Enable debug logging (set to `1`) | Disabled |
 
 ## Built-in Databases
 
@@ -561,6 +567,7 @@ All environment variables are optional. evmscope works without any configuration
 - **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** (done) — +5 tools: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
 - **v1.5** (done) — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v1.5.1** (done) — Code quality + security refactoring: 7 new shared modules, per-chain RPC URLs, cache size limits, unified address validation, CLI modularization
 
 ## License
 

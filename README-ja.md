@@ -473,7 +473,12 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 
 | 変数 | 用途 | デフォルト |
 |------|------|-----------|
-| `EVMSCOPE_RPC_URL` | カスタムRPCエンドポイント | パブリックRPC |
+| `EVMSCOPE_RPC_URL` | カスタムRPCエンドポイント（全チェーン） | パブリックRPC |
+| `EVMSCOPE_RPC_URL_ETHEREUM` | Ethereum専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_POLYGON` | Polygon専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_BASE` | Base専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism専用RPCエンドポイント | RPC_URLにフォールバック |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko APIキー（高レート制限） | 無料枠 |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan APIキー（高レート制限） | 無料枠 |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan APIキー | ETHERSCAN_KEYにフォールバック |
@@ -482,6 +487,7 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer APIキー（トークンホルダー） | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI APIキー（ブリッジルート） | パブリックアクセス |
+| `EVMSCOPE_DEBUG` | デバッグログ有効化（`1`に設定） | 無効 |
 
 ## 内蔵データベース
 
@@ -498,6 +504,7 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 - **v0.5**（完了）— +4つのツール：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0**（完了）— +5つのツール：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
 - **v1.5**（完了）— +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
+- **v1.5.1**（完了）— コード品質 + セキュリティリファクタリング：7つの新共有モジュール、チェーン別RPC URL、キャッシュサイズ制限、統一アドレス検証、CLIモジュール化
 
 ## ライセンス
 

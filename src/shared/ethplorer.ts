@@ -1,4 +1,5 @@
 import { cache } from "./cache.js";
+import { logCatchError } from "./logger.js";
 
 const BASE_URL = "https://api.ethplorer.io";
 const HOLDER_CACHE_TTL = 600; // 10분
@@ -46,8 +47,8 @@ export async function getTopTokenHolders(
         const info = (await infoRes.json()) as { holdersCount?: number };
         if (info.holdersCount) totalHolders = info.holdersCount;
       }
-    } catch {
-      // 무시
+    } catch (err) {
+      logCatchError("ethplorer:tokenInfo", err);
     }
 
     const result: TokenHoldersResult = {
@@ -61,7 +62,8 @@ export async function getTopTokenHolders(
 
     cache.set(cacheKey, result, HOLDER_CACHE_TTL);
     return result;
-  } catch {
+  } catch (err) {
+    logCatchError("ethplorer", err);
     return null;
   }
 }

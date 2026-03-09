@@ -1,7 +1,7 @@
 import { createPublicClient, http, type PublicClient, type Chain } from "viem";
 import { mainnet, polygon, arbitrum, base, optimism } from "viem/chains";
 import type { SupportedChain } from "../types.js";
-import chainsData from "../data/chains.json" with { type: "json" };
+import { chains } from "./chains.js";
 
 const viemChainMap: Record<SupportedChain, Chain> = {
   ethereum: mainnet,
@@ -11,14 +11,27 @@ const viemChainMap: Record<SupportedChain, Chain> = {
   optimism: optimism,
 };
 
+// 체인별 RPC URL 환경변수 매핑 (CRITICAL #1: 체인별 분리)
+const RPC_ENV_KEYS: Record<SupportedChain, string> = {
+  ethereum: "EVMSCOPE_RPC_URL_ETHEREUM",
+  polygon: "EVMSCOPE_RPC_URL_POLYGON",
+  arbitrum: "EVMSCOPE_RPC_URL_ARBITRUM",
+  base: "EVMSCOPE_RPC_URL_BASE",
+  optimism: "EVMSCOPE_RPC_URL_OPTIMISM",
+};
+
 const clients = new Map<string, PublicClient>();
 
 export function getClient(chain: SupportedChain = "ethereum"): PublicClient {
   if (!clients.has(chain)) {
-    const config = chainsData[chain];
+    const config = chains[chain];
     if (!config) throw new Error(`Unsupported chain: ${chain}`);
 
-    const rpcUrl = process.env.EVMSCOPE_RPC_URL || config.rpcUrl;
+    // 체인별 환경변수 → 공통 환경변수 → 기본값 순서
+    const rpcUrl =
+      process.env[RPC_ENV_KEYS[chain]] ||
+      process.env.EVMSCOPE_RPC_URL ||
+      config.rpcUrl;
 
     clients.set(
       chain,

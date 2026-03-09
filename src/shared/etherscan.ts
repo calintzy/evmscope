@@ -1,6 +1,7 @@
 import { cache } from "./cache.js";
-import chainsData from "../data/chains.json" with { type: "json" };
 import type { SupportedChain } from "../types.js";
+import { CHAIN_IDS } from "./constants.js";
+import { logCatchError } from "./logger.js";
 
 // 체인별 Etherscan API URL 매핑
 const EXPLORER_API_URLS: Record<string, string> = {
@@ -9,15 +10,6 @@ const EXPLORER_API_URLS: Record<string, string> = {
   arbitrum: "https://api.arbiscan.io/api",
   base: "https://api.basescan.org/api",
   optimism: "https://api-optimistic.etherscan.io/api",
-};
-
-// Sourcify 체인 ID 매핑
-const CHAIN_IDS: Record<string, number> = {
-  ethereum: 1,
-  polygon: 137,
-  arbitrum: 42161,
-  base: 8453,
-  optimism: 10,
 };
 
 const ABI_CACHE_TTL = 86400; // 24시간
@@ -63,8 +55,8 @@ async function fetchFromEtherscan(address: string, chain: SupportedChain): Promi
       const name = await fetchContractName(address, chain);
       return { abi, source: "etherscan", contractName: name };
     }
-  } catch {
-    // Etherscan 실패 시 무시
+  } catch (err) {
+    logCatchError("etherscan", err);
   }
   return null;
 }
@@ -90,8 +82,8 @@ async function fetchContractName(address: string, chain: SupportedChain): Promis
     if (json.status === "1" && json.result?.[0]?.ContractName) {
       return json.result[0].ContractName || null;
     }
-  } catch {
-    // 무시
+  } catch (err) {
+    logCatchError("etherscan", err);
   }
   return null;
 }
@@ -114,8 +106,8 @@ async function fetchFromSourcify(address: string, chain: SupportedChain): Promis
         const contractName = target ? Object.values(target)[0] ?? null : null;
         return { abi: metadata.output.abi, source: "sourcify", contractName };
       }
-    } catch {
-      // 다음 matchType 시도
+    } catch (err) {
+      logCatchError("etherscan:sourcify", err);
     }
   }
   return null;
@@ -188,8 +180,8 @@ export async function getTokenTransfers(
       cache.set(cacheKey, json.result, 60);
       return json.result;
     }
-  } catch {
-    // 무시
+  } catch (err) {
+    logCatchError("etherscan:tokentx", err);
   }
   return [];
 }
@@ -201,7 +193,7 @@ export async function lookup4byte(selector: string): Promise<string | null> {
   if (cached.hit) return cached.data;
 
   try {
-    const url = `https://www.4byte.directory/api/v1/signatures/?hex_signature=${selector}`;
+    const url = `https://www.4byte.directory/api/v1/signatures/?hex_signature=${encodeURIComponent(selector)}`;
     const res = await fetch(url);
     if (!res.ok) return null;
 
@@ -211,8 +203,8 @@ export async function lookup4byte(selector: string): Promise<string | null> {
       cache.set(cacheKey, sig, ABI_CACHE_TTL);
       return sig;
     }
-  } catch {
-    // 무시
+  } catch (err) {
+    logCatchError("etherscan:4byte", err);
   }
   return null;
 }

@@ -4,6 +4,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { fetchBridgeRoutes } from "../shared/lifi.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
+import { NATIVE_TOKEN_ADDRESS } from "../shared/constants.js";
 
 interface RouteInfo {
   bridge: string;
@@ -30,8 +31,6 @@ const inputSchema = z.object({
   amount: z.string().describe("전송 수량 (사람이 읽을 수 있는 단위, 예: '100')"),
 });
 
-const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
-
 async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<BridgeRoutesData>> {
   const { fromChain, toChain, token, amount } = args;
 
@@ -46,8 +45,8 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Br
 
   const upper = token.trim().toUpperCase();
   if (upper === "ETH" || upper === "POL" || upper === "MATIC") {
-    fromTokenAddress = ETH_ADDRESS;
-    toTokenAddress = ETH_ADDRESS;
+    fromTokenAddress = NATIVE_TOKEN_ADDRESS;
+    toTokenAddress = NATIVE_TOKEN_ADDRESS;
   } else if (token.startsWith("0x") && token.length === 42) {
     fromTokenAddress = token;
     toTokenAddress = token;
@@ -57,7 +56,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Br
     const meta = resolveTokenMeta(token, fromChain);
     if (!meta) return makeError(`Token '${token}' not found`, "TOKEN_NOT_FOUND");
     decimals = meta.decimals;
-    const addresses = meta.addresses as Record<string, string>;
+    const addresses = meta.addresses;
     fromTokenAddress = addresses[fromChain];
     toTokenAddress = addresses[toChain];
     if (!fromTokenAddress) return makeError(`Token '${token}' not available on ${fromChain}`, "TOKEN_NOT_FOUND");

@@ -1,5 +1,5 @@
 import { cache } from "./cache.js";
-import tokensData from "../data/tokens.json" with { type: "json" };
+import { tokens as tokensData } from "./tokens.js";
 
 const BASE_URL = "https://api.coingecko.com/api/v3";
 const PRICE_CACHE_TTL = 30;
@@ -26,8 +26,7 @@ export function resolveCoingeckoId(symbolOrAddress: string, chain?: string): str
 
   for (const token of tokensData) {
     if (isAddress) {
-      const addresses = token.addresses as Record<string, string>;
-      for (const [tokenChain, addr] of Object.entries(addresses)) {
+      for (const [tokenChain, addr] of Object.entries(token.addresses)) {
         if (addr.toLowerCase() === input.toLowerCase()) {
           if (!chain || tokenChain === chain) return token.coingeckoId;
         }
@@ -47,8 +46,7 @@ export function resolveTokenMeta(symbolOrAddress: string, chain?: string) {
 
   for (const token of tokensData) {
     if (isAddress) {
-      const addresses = token.addresses as Record<string, string>;
-      for (const [tokenChain, addr] of Object.entries(addresses)) {
+      for (const [tokenChain, addr] of Object.entries(token.addresses)) {
         if (addr.toLowerCase() === input.toLowerCase()) {
           if (!chain || tokenChain === chain) return token;
         }

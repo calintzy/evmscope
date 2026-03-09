@@ -5,7 +5,8 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { getPrice } from "../shared/coingecko.js";
 import { parseEther } from "viem";
-import chainsData from "../data/chains.json" with { type: "json" };
+import { getNativeCoingeckoId } from "../shared/chains.js";
+import { isValidAddress } from "../shared/validate.js";
 
 interface SimulationData {
   success: boolean;
@@ -26,10 +27,10 @@ const inputSchema = z.object({
 async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<SimulationData>> {
   const { from, to, data, value, chain } = args;
 
-  if (!from.startsWith("0x") || from.length !== 42) {
+  if (!isValidAddress(from)) {
     return makeError("Invalid 'from' address", "INVALID_INPUT");
   }
-  if (!to.startsWith("0x") || to.length !== 42) {
+  if (!isValidAddress(to)) {
     return makeError("Invalid 'to' address", "INVALID_INPUT");
   }
 
@@ -71,8 +72,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Si
       const block = await client.getBlock({ blockTag: "latest" });
       const baseFee = block.baseFeePerGas ?? 0n;
       const gasCostWei = baseFee * gasEstimate;
-      const nativeId = (chainsData as Record<string, { nativeCurrency: { coingeckoId: string } }>)[chain]
-        ?.nativeCurrency?.coingeckoId;
+      const nativeId = getNativeCoingeckoId(chain);
       if (nativeId) {
         const priceData = await getPrice(nativeId);
         gasEstimateUsd = (Number(gasCostWei) / 1e18) * priceData.priceUsd;

@@ -5,7 +5,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
-import tokensData from "../data/tokens.json" with { type: "json" };
+import { tokens as tokensData } from "../shared/tokens.js";
 
 interface TokenInfoData {
   address: string;
@@ -68,7 +68,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
     if (!tokenInfo) {
       return makeError(`Token '${token}' not found in built-in database`, "TOKEN_NOT_FOUND");
     }
-    const addr = (tokenInfo.addresses as Record<string, string>)[chain];
+    const addr = tokenInfo.addresses[chain];
     if (!addr) {
       return makeError(`Token '${token}' not available on ${chain}`, "TOKEN_NOT_FOUND");
     }
@@ -104,8 +104,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
   } catch (err) {
     // RPC 실패 시 내장 DB 폴백
     const fallback = tokensData.find((t) => {
-      const addresses = t.addresses as Record<string, string>;
-      return Object.values(addresses).some(
+      return Object.values(t.addresses).some(
         (a) => a.toLowerCase() === contractAddress.toLowerCase(),
       );
     });

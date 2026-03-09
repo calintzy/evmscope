@@ -4,9 +4,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { fetchQuote } from "../shared/paraswap.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
-
-// ParaSwap 네이티브 토큰 주소
-const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+import { NATIVE_TOKEN_ADDRESS } from "../shared/constants.js";
 
 interface SwapQuoteData {
   tokenIn: { symbol: string; address: string; amount: string };
@@ -29,7 +27,7 @@ function resolveToken(symbolOrAddress: string, chain: SupportedChain): { address
 
   // ETH/POL → ParaSwap 네이티브 토큰 주소
   if (input === "ETH" || input === "POL" || input === "MATIC") {
-    return { address: ETH_ADDRESS, symbol: input, decimals: 18 };
+    return { address: NATIVE_TOKEN_ADDRESS, symbol: input, decimals: 18 };
   }
 
   // 주소인 경우
@@ -45,7 +43,7 @@ function resolveToken(symbolOrAddress: string, chain: SupportedChain): { address
   // 심볼로 검색
   const meta = resolveTokenMeta(symbolOrAddress, chain);
   if (!meta) return null;
-  const addresses = meta.addresses as Record<string, string>;
+  const addresses = meta.addresses;
   const addr = addresses[chain];
   if (!addr) return null;
   return { address: addr, symbol: meta.symbol, decimals: meta.decimals };
