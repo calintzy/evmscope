@@ -295,7 +295,7 @@ ENS名とアドレスを双方向で解決します（Ethereumメインネット
 
 ## ロードマップ
 
-- **v0.1**（完了）— 5つのツール：価格、Gas、残高、トークン情報、ENS
+- **v0.1**（完了）— 5つのツール：価格、トランザクション手数料、残高、トークン情報、ENS
 - **v0.5**（完了）— +4つのツール：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0** — +5つのツール：getSwapQuote、getApprovalStatus、getProtocolTVL、compareGas、getWhaleMovements
 - **v1.5** — +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes

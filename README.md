@@ -8,7 +8,7 @@ EVM blockchain intelligence toolkit for AI agents. A single MCP server providing
 
 ## Features
 
-- **9 tools** — Price, gas, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
+- **9 tools** — Price, transaction fees, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
 - **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
 - **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
@@ -297,7 +297,7 @@ All environment variables are optional. evmscope works without any configuration
 
 ## Roadmap
 
-- **v0.1** (done) — 5 tools: price, gas, balance, token info, ENS
+- **v0.1** (done) — 5 tools: price, transaction fees, balance, token info, ENS
 - **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** — +5 tools: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
 - **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes

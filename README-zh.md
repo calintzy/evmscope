@@ -295,7 +295,7 @@ npx evmscope
 
 ## 路线图
 
-- **v0.1**（已完成）— 5 个工具：价格、Gas、余额、代币信息、ENS
+- **v0.1**（已完成）— 5 个工具：价格、交易手续费、余额、代币信息、ENS
 - **v0.5**（已完成）— +4 个工具：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0** — +5 个工具：getSwapQuote、getApprovalStatus、getProtocolTVL、compareGas、getWhaleMovements
 - **v1.5** — +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
