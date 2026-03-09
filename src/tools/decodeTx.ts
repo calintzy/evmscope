@@ -126,8 +126,9 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<De
             decodedFunction = {
               name: decoded.functionName,
               signature: null,
+              // decoded.args는 readonly 배열일 수 있으므로 unknown으로 먼저 변환 후 직렬화
               args: decoded.args ? Object.fromEntries(
-                Object.entries(decoded.args as Record<string, unknown>).map(([k, v]) => [k, serializeArg(v)])
+                Object.entries(decoded.args as unknown as Record<string, unknown>).map(([k, v]) => [k, serializeArg(v)])
               ) : {},
             };
           } catch {
@@ -168,10 +169,12 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<De
             topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
           });
           decodedEvents.push({
-            name: decoded.eventName,
+            // eventName이 undefined일 수 있으므로 fallback 처리
+            name: decoded.eventName ?? "unknown",
             address: log.address,
+            // decoded.args는 readonly 배열일 수 있으므로 unknown으로 먼저 변환 후 직렬화
             args: decoded.args ? Object.fromEntries(
-              Object.entries(decoded.args as Record<string, unknown>).map(([k, v]) => [k, serializeArg(v)])
+              Object.entries(decoded.args as unknown as Record<string, unknown>).map(([k, v]) => [k, serializeArg(v)])
             ) : {},
           });
           continue;

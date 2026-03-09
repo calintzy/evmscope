@@ -40,7 +40,8 @@ function findLabel(address: string): { label: string; category: string; tags: st
 function findProtocol(address: string, chain: string): { name: string; category: string; role: string } | null {
   const addr = address.toLowerCase();
   for (const protocol of protocolsData) {
-    const chainAddresses = (protocol.addresses as Record<string, Record<string, string>>)[chain];
+    // addresses 타입이 optional 필드를 포함하므로 unknown 경유 후 캐스팅
+    const chainAddresses = (protocol.addresses as unknown as Record<string, Record<string, string>>)[chain];
     if (!chainAddresses) continue;
 
     for (const [role, protocolAddr] of Object.entries(chainAddresses)) {
