@@ -1,0 +1,62 @@
+{
+  "ethereum": {
+    "id": 1,
+    "name": "ethereum",
+    "rpcUrl": "https://eth.llamarpc.com",
+    "explorerUrl": "https://etherscan.io",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18,
+      "coingeckoId": "ethereum"
+    }
+  },
+  "polygon": {
+    "id": 137,
+    "name": "polygon",
+    "rpcUrl": "https://polygon.llamarpc.com",
+    "explorerUrl": "https://polygonscan.com",
+    "nativeCurrency": {
+      "name": "POL",
+      "symbol": "POL",
+      "decimals": 18,
+      "coingeckoId": "matic-network"
+    }
+  },
+  "arbitrum": {
+    "id": 42161,
+    "name": "arbitrum",
+    "rpcUrl": "https://arbitrum.llamarpc.com",
+    "explorerUrl": "https://arbiscan.io",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18,
+      "coingeckoId": "ethereum"
+    }
+  },
+  "base": {
+    "id": 8453,
+    "name": "base",
+    "rpcUrl": "https://base.llamarpc.com",
+    "explorerUrl": "https://basescan.org",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18,
+      "coingeckoId": "ethereum"
+    }
+  },
+  "optimism": {
+    "id": 10,
+    "name": "optimism",
+    "rpcUrl": "https://optimism.llamarpc.com",
+    "explorerUrl": "https://optimistic.etherscan.io",
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18,
+      "coingeckoId": "ethereum"
+    }
+  }
+}
