@@ -37,7 +37,9 @@ export type ErrorCode =
   | "API_ERROR"
   | "RPC_ERROR"
   | "RATE_LIMITED"
-  | "ENS_NOT_FOUND";
+  | "ENS_NOT_FOUND"
+  | "TX_NOT_FOUND"
+  | "ABI_NOT_FOUND";
 
 export function makeSuccess<T>(chain: SupportedChain, data: T, cached: boolean): ToolSuccess<T> {
   return { success: true, chain, data, cached, timestamp: Date.now() };
