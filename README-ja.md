@@ -20,6 +20,20 @@ AIエージェント向けEVMブロックチェーンインテリジェンスツ
 npx evmscope
 ```
 
+### CLIモード
+
+AIクライアント不要。ターミナルから直接利用できます：
+
+```bash
+npx evmscope price ETH
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+`npx evmscope --help`で全コマンドを確認。`--json`フラグでJSON出力も可能です。
+
 ### Claude Desktop
 
 `claude_desktop_config.json`に追加：

@@ -20,6 +20,20 @@
 npx evmscope
 ```
 
+### CLI 模式
+
+无需 AI 客户端，直接在终端中使用：
+
+```bash
+npx evmscope price ETH
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+运行 `npx evmscope --help` 查看所有命令。添加 `--json` 获取原始 JSON 输出。
+
 ### Claude Desktop
 
 添加到 `claude_desktop_config.json`：

@@ -20,6 +20,20 @@ AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격
 npx evmscope
 ```
 
+### CLI 모드
+
+AI 클라이언트 없이 터미널에서 직접 사용할 수 있습니다:
+
+```bash
+npx evmscope price ETH
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+`npx evmscope --help`로 전체 명령어를 확인하세요. `--json` 플래그로 JSON 출력도 가능합니다.
+
 ### Claude Desktop
 
 `claude_desktop_config.json`에 추가:

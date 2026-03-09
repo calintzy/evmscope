@@ -22,6 +22,20 @@ EVM blockchain intelligence toolkit for AI agents. A single MCP server providing
 npx evmscope
 ```
 
+### CLI Mode
+
+Use evmscope directly from your terminal — no AI client needed:
+
+```bash
+npx evmscope price ETH
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+```
+
+Run `npx evmscope --help` to see all commands. Add `--json` for raw JSON output.
+
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
