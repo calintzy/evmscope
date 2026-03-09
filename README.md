@@ -2,7 +2,7 @@
 
 [한국어](README-ko.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for price, gas, balance, transaction decoding, address identification, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for token prices, transaction fees, wallet balances, transaction decoding, address identification, and more.
 
 > "AgentKit executes. evmscope decides."
 
