@@ -1,16 +1,18 @@
 # evmscope
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 20 tools for price, gas, balance, token info, ENS resolution, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for price, gas, balance, transaction decoding, address identification, and more.
 
 > "AgentKit executes. evmscope decides."
 
 ## Features
 
-- **5 tools** (MVP) — `getTokenPrice`, `getGasPrice`, `getBalance`, `getTokenInfo`, `resolveENS`
+- **9 tools** — Price, gas, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
 - **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
+- **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
+- **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
 - **Zero config** — No API keys required. Works out of the box with free public APIs
 - **Read-only** — No transaction execution. Zero risk of fund loss
-- **Built-in fallbacks** — Embedded token database for offline operation
+- **Built-in fallbacks** — Embedded token/signature/label databases for offline operation
 
 ## Quick Start
 
@@ -61,7 +63,6 @@ Get current token price, 24h change, market cap, and volume.
 // Output
 {
   "success": true,
-  "chain": "ethereum",
   "data": {
     "symbol": "ETH",
     "name": "Ethereum",
@@ -69,9 +70,7 @@ Get current token price, 24h change, market cap, and volume.
     "change24h": -2.34,
     "marketCap": 232000000000,
     "volume24h": 12500000000
-  },
-  "cached": false,
-  "timestamp": 1741521600000
+  }
 }
 ```
 
@@ -86,7 +85,6 @@ Get current gas prices in slow/normal/fast tiers with USD estimates.
 // Output
 {
   "success": true,
-  "chain": "ethereum",
   "data": {
     "slow": { "maxFeePerGas": "18.5", "maxPriorityFeePerGas": "1.2", "estimatedCostUsd": 0.75 },
     "normal": { "maxFeePerGas": "20.0", "maxPriorityFeePerGas": "1.5", "estimatedCostUsd": 0.81 },
@@ -108,17 +106,11 @@ Get native token + ERC-20 token balances with USD values.
 // Output
 {
   "success": true,
-  "chain": "ethereum",
   "data": {
-    "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-    "nativeBalance": {
-      "symbol": "ETH",
-      "balance": "1234567890123456789",
-      "balanceFormatted": "1.234567890123456789",
-      "valueUsd": 2382.50
-    },
+    "address": "0xd8dA...",
+    "nativeBalance": { "symbol": "ETH", "balanceFormatted": "1.234", "valueUsd": 2382.50 },
     "tokenBalances": [
-      { "symbol": "USDC", "address": "0xA0b8...", "balance": "1000000", "balanceFormatted": "1.0", "decimals": 6, "valueUsd": 1.00 }
+      { "symbol": "USDC", "balanceFormatted": "1.0", "valueUsd": 1.00 }
     ],
     "totalValueUsd": 2383.50
   }
@@ -136,14 +128,12 @@ Get ERC-20 token metadata (name, symbol, decimals, total supply).
 // Output
 {
   "success": true,
-  "chain": "ethereum",
   "data": {
     "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
     "name": "USD Coin",
     "symbol": "USDC",
     "decimals": 6,
-    "totalSupply": "26000000000",
-    "chain": "ethereum"
+    "totalSupply": "26000000000"
   }
 }
 ```
@@ -159,12 +149,113 @@ Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
 // Output
 {
   "success": true,
-  "chain": "ethereum",
   "data": {
     "name": "vitalik.eth",
     "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
     "avatar": "https://...",
     "resolved": "name_to_address"
+  }
+}
+```
+
+### getTxStatus
+
+Get transaction status, receipt, confirmations, and gas usage.
+
+```json
+// Input
+{ "txHash": "0xabc...def", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "hash": "0xabc...def",
+    "status": "success",
+    "blockNumber": 19234567,
+    "confirmations": 42,
+    "from": "0x1234...",
+    "to": "0x5678...",
+    "value": "1.5",
+    "gasUsed": "21000",
+    "effectiveGasPrice": "20.0",
+    "timestamp": 1741521600
+  }
+}
+```
+
+### decodeTx
+
+Decode a transaction into structured JSON — function name, parameters, event logs.
+
+```json
+// Input
+{ "txHash": "0xabc...def", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "hash": "0xabc...def",
+    "from": "0x1234...",
+    "to": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+    "value": "1.0",
+    "status": "success",
+    "function": {
+      "name": "swapExactETHForTokens",
+      "signature": "swapExactETHForTokens(uint256,address[],address,uint256)",
+      "args": { "amountOutMin": "1000000", "path": ["0xC02a...", "0xA0b8..."] }
+    },
+    "events": [
+      { "name": "Transfer", "address": "0xA0b8...", "args": { "from": "0x...", "to": "0x...", "value": "1000000" } }
+    ],
+    "gasUsed": "150000",
+    "gasPrice": "20.0"
+  }
+}
+```
+
+### getContractABI
+
+Look up a verified contract's ABI (Etherscan → Sourcify fallback).
+
+```json
+// Input
+{ "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "address": "0xA0b8...",
+    "abi": [...],
+    "source": "etherscan",
+    "contractName": "FiatTokenV2_2",
+    "isContract": true,
+    "functionCount": 42,
+    "eventCount": 8
+  }
+}
+```
+
+### identifyAddress
+
+Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
+
+```json
+// Input
+{ "address": "0x28C6c06298d514Db089934071355E5743bf21d60", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "address": "0x28C6...",
+    "label": "Binance Hot Wallet",
+    "category": "exchange",
+    "protocol": null,
+    "isContract": false,
+    "tags": ["cex", "binance"]
   }
 }
 ```
@@ -187,12 +278,25 @@ All environment variables are optional. evmscope works without any configuration
 |----------|---------|---------|
 | `EVMSCOPE_RPC_URL` | Custom RPC endpoint | Public RPC |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
-| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key | Free tier |
+| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
+| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
+
+## Built-in Databases
+
+| Database | Contents |
+|----------|----------|
+| `tokens.json` | 49 major tokens with multi-chain addresses and CoinGecko IDs |
+| `signatures.json` | 36 common function signatures (ERC-20, DEX, lending, NFT) |
+| `labels.json` | 30 labeled addresses (exchanges, bridges, whale wallets) |
+| `protocols.json` | 10 DeFi protocols with multi-chain contract addresses |
 
 ## Roadmap
 
-- **v0.1** (MVP) — 5 tools: price, gas, balance, token info, ENS
-- **v0.5** — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
+- **v0.1** (done) — 5 tools: price, gas, balance, token info, ENS
+- **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** — +5 tools: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
 - **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 
