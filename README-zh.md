@@ -1,22 +1,20 @@
 # evmscope
 
-[한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
+面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、交易手续费、钱包余额、交易解析、地址识别等 9 个工具。
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 9 tools for token prices, transaction fees, wallet balances, transaction decoding, address identification, and more.
+> "用 AgentKit 执行，用 evmscope 决策。"
 
-> "AgentKit executes. evmscope decides."
+## 特性
 
-## Features
+- **9 个工具** — 价格、手续费、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别
+- **5 条 EVM 链** — Ethereum、Polygon、Arbitrum、Base、Optimism
+- **49 个内置代币** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPE 等
+- **30+ 标记地址** — 交易所、DeFi 协议、跨链桥、巨鲸钱包
+- **零配置** — 无需 API 密钥，使用免费公共 API 即刻运行
+- **只读模式** — 无交易执行功能，零资金损失风险
+- **内置回退** — 代币/签名/标签内置数据库，支持离线运行
 
-- **9 tools** — Price, gas, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
-- **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
-- **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
-- **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
-- **Zero config** — No API keys required. Works out of the box with free public APIs
-- **Read-only** — No transaction execution. Zero risk of fund loss
-- **Built-in fallbacks** — Embedded token/signature/label databases for offline operation
-
-## Quick Start
+## 快速开始
 
 ```bash
 npx evmscope
@@ -24,7 +22,7 @@ npx evmscope
 
 ### Claude Desktop
 
-Add to `claude_desktop_config.json`:
+添加到 `claude_desktop_config.json`：
 
 ```json
 {
@@ -39,7 +37,7 @@ Add to `claude_desktop_config.json`:
 
 ### Cursor
 
-Add to `.cursor/mcp.json`:
+添加到 `.cursor/mcp.json`：
 
 ```json
 {
@@ -52,17 +50,17 @@ Add to `.cursor/mcp.json`:
 }
 ```
 
-## Tools
+## 工具
 
 ### getTokenPrice
 
-Get current token price, 24h change, market cap, and volume.
+查询代币当前价格、24 小时涨跌幅、市值和交易量。
 
 ```json
-// Input
+// 输入
 { "token": "ETH", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -78,13 +76,13 @@ Get current token price, 24h change, market cap, and volume.
 
 ### getGasPrice
 
-Get current gas prices in slow/normal/fast tiers with USD estimates.
+查询当前 Gas 费用，提供 slow/normal/fast 三档及美元估算。
 
 ```json
-// Input
+// 输入
 { "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -99,13 +97,13 @@ Get current gas prices in slow/normal/fast tiers with USD estimates.
 
 ### getBalance
 
-Get native token + ERC-20 token balances with USD values.
+查询原生代币 + ERC-20 代币余额及美元估值。
 
 ```json
-// Input
+// 输入
 { "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -121,13 +119,13 @@ Get native token + ERC-20 token balances with USD values.
 
 ### getTokenInfo
 
-Get ERC-20 token metadata (name, symbol, decimals, total supply).
+查询 ERC-20 代币元数据（名称、符号、精度、总供应量）。
 
 ```json
-// Input
+// 输入
 { "token": "USDC", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -142,13 +140,13 @@ Get ERC-20 token metadata (name, symbol, decimals, total supply).
 
 ### resolveENS
 
-Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
+双向解析 ENS 名称与地址（仅限 Ethereum 主网）。
 
 ```json
-// Input
+// 输入
 { "nameOrAddress": "vitalik.eth" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -162,13 +160,13 @@ Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
 
 ### getTxStatus
 
-Get transaction status, receipt, confirmations, and gas usage.
+查询交易状态、回执、确认数和 Gas 消耗。
 
 ```json
-// Input
+// 输入
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -188,13 +186,13 @@ Get transaction status, receipt, confirmations, and gas usage.
 
 ### decodeTx
 
-Decode a transaction into structured JSON — function name, parameters, event logs.
+将交易解析为结构化 JSON — 函数名、参数、事件日志。
 
 ```json
-// Input
+// 输入
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -219,13 +217,13 @@ Decode a transaction into structured JSON — function name, parameters, event l
 
 ### getContractABI
 
-Look up a verified contract's ABI (Etherscan → Sourcify fallback).
+查询已验证合约的 ABI（Etherscan -> Sourcify 回退）。
 
 ```json
-// Input
+// 输入
 { "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -242,13 +240,13 @@ Look up a verified contract's ABI (Etherscan → Sourcify fallback).
 
 ### identifyAddress
 
-Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
+识别地址身份 — 交易所、DeFi 协议、巨鲸钱包、EOA 分类。
 
 ```json
-// Input
+// 输入
 { "address": "0x28C6c06298d514Db089934071355E5743bf21d60", "chain": "ethereum" }
 
-// Output
+// 输出
 {
   "success": true,
   "data": {
@@ -262,46 +260,46 @@ Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
 }
 ```
 
-## Supported Chains
+## 支持的链
 
-| Chain | Chain ID | Native Token |
-|-------|----------|-------------|
+| 链 | Chain ID | 原生代币 |
+|----|----------|---------|
 | Ethereum | 1 | ETH |
 | Polygon | 137 | POL |
 | Arbitrum | 42161 | ETH |
 | Base | 8453 | ETH |
 | Optimism | 10 | ETH |
 
-## Environment Variables (Optional)
+## 环境变量（可选）
 
-All environment variables are optional. evmscope works without any configuration.
+所有环境变量均为可选。evmscope 无需任何配置即可运行。
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `EVMSCOPE_RPC_URL` | Custom RPC endpoint | Public RPC |
-| `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
-| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
-| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
+| 变量 | 用途 | 默认值 |
+|------|------|--------|
+| `EVMSCOPE_RPC_URL` | 自定义 RPC 端点 | 公共 RPC |
+| `EVMSCOPE_COINGECKO_KEY` | CoinGecko API 密钥（更高速率限制） | 免费层 |
+| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API 密钥（更高速率限制） | 免费层 |
+| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API 密钥 | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API 密钥 | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_BASESCAN_KEY` | Basescan API 密钥 | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 密钥 | 回退至 ETHERSCAN_KEY |
 
-## Built-in Databases
+## 内置数据库
 
-| Database | Contents |
-|----------|----------|
-| `tokens.json` | 49 major tokens with multi-chain addresses and CoinGecko IDs |
-| `signatures.json` | 36 common function signatures (ERC-20, DEX, lending, NFT) |
-| `labels.json` | 30 labeled addresses (exchanges, bridges, whale wallets) |
-| `protocols.json` | 10 DeFi protocols with multi-chain contract addresses |
+| 数据库 | 内容 |
+|--------|------|
+| `tokens.json` | 49 个主要代币 — 多链地址 + CoinGecko ID |
+| `signatures.json` | 36 个函数签名 — ERC-20、DEX、借贷、NFT |
+| `labels.json` | 30 个标记地址 — 交易所、跨链桥、巨鲸钱包 |
+| `protocols.json` | 10 个 DeFi 协议 — 多链合约地址 |
 
-## Roadmap
+## 路线图
 
-- **v0.1** (done) — 5 tools: price, gas, balance, token info, ENS
-- **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
-- **v1.0** — +5 tools: getSwapQuote, getApprovalStatus, getProtocolTVL, compareGas, getWhaleMovements
-- **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v0.1**（已完成）— 5 个工具：价格、Gas、余额、代币信息、ENS
+- **v0.5**（已完成）— +4 个工具：decodeTx、getTxStatus、getContractABI、identifyAddress
+- **v1.0** — +5 个工具：getSwapQuote、getApprovalStatus、getProtocolTVL、compareGas、getWhaleMovements
+- **v1.5** — +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 
-## License
+## 许可证
 
 [MIT](LICENSE)
