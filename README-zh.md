@@ -1,12 +1,12 @@
 # evmscope
 
-面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、授权状态、TVL、巨鲸追踪等 14 个工具。
+面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟等 20 个工具。
 
 > "用 AgentKit 执行，用 evmscope 决策。"
 
 ## 特性
 
-- **14 个工具** — 价格、Gas 对比、兑换报价、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别
+- **20 个工具** — 价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、事件日志、代币持有者、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别
 - **5 条 EVM 链** — Ethereum、Polygon、Arbitrum、Base、Optimism
 - **49 个内置代币** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPE 等
 - **30+ 标记地址** — 交易所、DeFi 协议、跨链桥、巨鲸钱包
@@ -391,6 +391,72 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 }
 ```
 
+### getYieldRates
+
+查询 DeFi 收益率（APY），基于 DefiLlama，支持按协议/链筛选。
+
+```json
+// 输入
+{ "protocol": "aave-v3", "chain": "Ethereum", "minTvl": 1000000 }
+// 输出
+{ "success": true, "data": { "pools": [{ "project": "aave-v3", "symbol": "USDC", "apy": 5.2, "tvlUsd": 500000000 }], "count": 10 } }
+```
+
+### getContractEvents
+
+查询合约事件日志（自动 ABI 解码）。
+
+```json
+// 输入
+{ "address": "0xA0b8...", "chain": "ethereum", "limit": 5 }
+// 输出
+{ "success": true, "data": { "events": [{ "name": "Transfer", "args": { "from": "0x...", "to": "0x...", "value": "1000000" }, "blockNumber": 19234567 }], "count": 5 } }
+```
+
+### getTokenHolders
+
+查询代币前 N 大持有者（Ethereum: Ethplorer，其他链: Etherscan 聚合）。
+
+```json
+// 输入
+{ "token": "USDC", "chain": "ethereum", "limit": 10 }
+// 输出
+{ "success": true, "data": { "holders": [{ "address": "0x...", "balance": "1000000", "share": 15.5 }], "totalHolders": 12345 } }
+```
+
+### simulateTx
+
+模拟交易（eth_call + estimateGas，Gas 费用 USD 换算，revert reason 解码）。
+
+```json
+// 输入
+{ "from": "0x1234...", "to": "0x5678...", "data": "0xa9059cbb...", "chain": "ethereum" }
+// 输出
+{ "success": true, "data": { "success": true, "gasEstimate": "65000", "gasEstimateUsd": 2.50, "returnData": "0x0000...0001", "error": null } }
+```
+
+### checkHoneypot
+
+检测蜜罐（诈骗）代币（Honeypot.is 基础，买卖税率，风险等级）。
+
+```json
+// 输入
+{ "token": "0x...", "chain": "ethereum" }
+// 输出
+{ "success": true, "data": { "isHoneypot": false, "riskLevel": "safe", "buyTax": 0, "sellTax": 0, "flags": [] } }
+```
+
+### getBridgeRoutes
+
+查询跨链桥路线（LI.FI 基础，费用/时间/路线对比）。
+
+```json
+// 输入
+{ "fromChain": "ethereum", "toChain": "arbitrum", "token": "USDC", "amount": "100" }
+// 输出
+{ "success": true, "data": { "routes": [{ "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "amountOut": "99.50" }], "bestRoute": { "bridge": "Stargate" } } }
+```
+
 ## 支持的链
 
 | 链 | Chain ID | 原生代币 |
@@ -414,6 +480,8 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 密钥 | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API 密钥（代币持有者） | `freekey` |
+| `EVMSCOPE_LIFI_KEY` | LI.FI API 密钥（跨链桥路线） | 公共访问 |
 
 ## 内置数据库
 
@@ -429,7 +497,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 - **v0.1**（已完成）— 5 个工具：价格、交易手续费、余额、代币信息、ENS
 - **v0.5**（已完成）— +4 个工具：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0**（已完成）— +5 个工具：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
-- **v1.5** — +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
+- **v1.5**（已完成）— +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 
 ## 许可证
 

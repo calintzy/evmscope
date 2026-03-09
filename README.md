@@ -2,13 +2,13 @@
 
 [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 14 tools for token prices, gas comparison, swap quotes, approval status, protocol TVL, whale tracking, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 20 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, and more.
 
 > "AgentKit executes. evmscope decides."
 
 ## Features
 
-- **14 tools** — Price, gas compare, swap quote, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
+- **20 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
 - **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
 - **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
@@ -393,6 +393,133 @@ Get DEX swap quotes via ParaSwap — optimal route, gas cost, auto ETH→WETH co
 }
 ```
 
+### getYieldRates
+
+Get DeFi yield rates (APY) from DefiLlama. Filter by protocol, chain, minimum TVL.
+
+```json
+// Input
+{ "protocol": "aave-v3", "chain": "Ethereum", "minTvl": 1000000 }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "pools": [
+      { "project": "aave-v3", "symbol": "USDC", "chain": "Ethereum", "apy": 5.2, "tvlUsd": 500000000, "stablecoin": true }
+    ],
+    "count": 10
+  }
+}
+```
+
+### getContractEvents
+
+Get contract event logs with automatic ABI decoding.
+
+```json
+// Input
+{ "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum", "limit": 5 }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "events": [
+      { "name": "Transfer", "args": { "from": "0x...", "to": "0x...", "value": "1000000" }, "txHash": "0x...", "blockNumber": 19234567 }
+    ],
+    "count": 5,
+    "fromBlock": 19233567,
+    "toBlock": 19234567
+  }
+}
+```
+
+### getTokenHolders
+
+Get top token holders. Ethereum uses Ethplorer, other chains aggregate from Etherscan transfers.
+
+```json
+// Input
+{ "token": "USDC", "chain": "ethereum", "limit": 10 }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "token": "0xA0b8...",
+    "holders": [
+      { "address": "0x...", "balance": "1000000", "share": 15.5 }
+    ],
+    "totalHolders": 12345
+  }
+}
+```
+
+### simulateTx
+
+Simulate a transaction via eth_call + estimateGas. Returns gas estimate in USD and revert reason on failure.
+
+```json
+// Input
+{ "from": "0x1234...", "to": "0x5678...", "data": "0xa9059cbb...", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "gasEstimate": "65000",
+    "gasEstimateUsd": 2.50,
+    "returnData": "0x0000...0001",
+    "error": null
+  }
+}
+```
+
+### checkHoneypot
+
+Detect honeypot (scam) tokens via Honeypot.is. Returns buy/sell tax, risk level, and flags.
+
+```json
+// Input
+{ "token": "0x...", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "isHoneypot": false,
+    "riskLevel": "safe",
+    "buyTax": 0,
+    "sellTax": 0,
+    "flags": [],
+    "tokenName": "USD Coin",
+    "tokenSymbol": "USDC"
+  }
+}
+```
+
+### getBridgeRoutes
+
+Get cross-chain bridge routes via LI.FI. Compares fees, time, and output amount.
+
+```json
+// Input
+{ "fromChain": "ethereum", "toChain": "arbitrum", "token": "USDC", "amount": "100" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "routes": [
+      { "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "gasCostUsd": 2.10, "amountOut": "99.50", "amountOutUsd": 99.50 }
+    ],
+    "bestRoute": { "bridge": "Stargate", "..." : "..." }
+  }
+}
+```
+
 ## Supported Chains
 
 | Chain | Chain ID | Native Token |
@@ -416,6 +543,8 @@ All environment variables are optional. evmscope works without any configuration
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API key (token holders) | `freekey` |
+| `EVMSCOPE_LIFI_KEY` | LI.FI API key (bridge routes) | Public access |
 
 ## Built-in Databases
 
@@ -431,7 +560,7 @@ All environment variables are optional. evmscope works without any configuration
 - **v0.1** (done) — 5 tools: price, transaction fees, balance, token info, ENS
 - **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** (done) — +5 tools: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
-- **v1.5** — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v1.5** (done) — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 
 ## License
 

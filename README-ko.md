@@ -1,12 +1,12 @@
 # evmscope
 
-AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격, 가스비 비교, 스왑 견적, 승인 상태, TVL, 고래 추적 등 14개 도구를 제공하는 단일 MCP 서버.
+AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격, 가스비 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션 등 20개 도구를 제공하는 단일 MCP 서버.
 
 > "AgentKit으로 실행하고, evmscope로 판단하세요."
 
 ## 특징
 
-- **14개 도구** — 가격, 가스비 비교, 스왑 견적, 승인 상태, TVL, 고래 추적, 잔고, 토큰 정보, ENS, TX 상태, TX 해석, ABI 조회, 주소 식별
+- **20개 도구** — 가격, 가스비 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, 이벤트 로그, 토큰 홀더, 승인 상태, TVL, 고래 추적, 잔고, 토큰 정보, ENS, TX 상태, TX 해석, ABI 조회, 주소 식별
 - **5개 EVM 체인** — Ethereum, Polygon, Arbitrum, Base, Optimism
 - **49개 내장 토큰** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE 등
 - **30+ 라벨링 주소** — 거래소, DeFi 프로토콜, 브릿지, 고래 지갑
@@ -391,6 +391,130 @@ DEX 스왑 견적을 조회합니다 (ParaSwap 기반, 최적 경로, 가스비 
 }
 ```
 
+### getYieldRates
+
+DeFi 수익률(APY)을 조회합니다 (DefiLlama 기반, 프로토콜/체인별 필터).
+
+```json
+// 입력
+{ "protocol": "aave-v3", "chain": "Ethereum", "minTvl": 1000000 }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "pools": [
+      { "project": "aave-v3", "symbol": "USDC", "chain": "Ethereum", "apy": 5.2, "tvlUsd": 500000000, "stablecoin": true }
+    ],
+    "count": 10
+  }
+}
+```
+
+### getContractEvents
+
+컨트랙트 이벤트 로그를 조회합니다 (ABI 자동 디코딩).
+
+```json
+// 입력
+{ "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum", "limit": 5 }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "events": [
+      { "name": "Transfer", "args": { "from": "0x...", "to": "0x...", "value": "1000000" }, "txHash": "0x...", "blockNumber": 19234567 }
+    ],
+    "count": 5
+  }
+}
+```
+
+### getTokenHolders
+
+토큰 상위 홀더를 조회합니다 (Ethereum: Ethplorer, 기타 체인: Etherscan 집계).
+
+```json
+// 입력
+{ "token": "USDC", "chain": "ethereum", "limit": 10 }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "holders": [
+      { "address": "0x...", "balance": "1000000", "share": 15.5 }
+    ],
+    "totalHolders": 12345
+  }
+}
+```
+
+### simulateTx
+
+트랜잭션을 시뮬레이션합니다 (eth_call + estimateGas, 가스비 USD 환산, revert reason 디코딩).
+
+```json
+// 입력
+{ "from": "0x1234...", "to": "0x5678...", "data": "0xa9059cbb...", "chain": "ethereum" }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "gasEstimate": "65000",
+    "gasEstimateUsd": 2.50,
+    "returnData": "0x0000...0001",
+    "error": null
+  }
+}
+```
+
+### checkHoneypot
+
+토큰의 허니팟(사기) 여부를 탐지합니다 (Honeypot.is 기반, 매수/매도 세금, 위험도 판정).
+
+```json
+// 입력
+{ "token": "0x...", "chain": "ethereum" }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "isHoneypot": false,
+    "riskLevel": "safe",
+    "buyTax": 0,
+    "sellTax": 0,
+    "flags": [],
+    "tokenName": "USD Coin",
+    "tokenSymbol": "USDC"
+  }
+}
+```
+
+### getBridgeRoutes
+
+크로스체인 브릿지 경로를 조회합니다 (LI.FI 기반, 비용/시간/경로 비교).
+
+```json
+// 입력
+{ "fromChain": "ethereum", "toChain": "arbitrum", "token": "USDC", "amount": "100" }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "routes": [
+      { "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "gasCostUsd": 2.10, "amountOut": "99.50", "amountOutUsd": 99.50 }
+    ],
+    "bestRoute": { "bridge": "Stargate", "..." : "..." }
+  }
+}
+```
+
 ## 지원 체인
 
 | 체인 | Chain ID | 네이티브 토큰 |
@@ -414,6 +538,8 @@ DEX 스왑 견적을 조회합니다 (ParaSwap 기반, 최적 경로, 가스비 
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API 키 | ETHERSCAN_KEY 폴백 |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan API 키 | ETHERSCAN_KEY 폴백 |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 키 | ETHERSCAN_KEY 폴백 |
+| `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API 키 (토큰 홀더) | `freekey` |
+| `EVMSCOPE_LIFI_KEY` | LI.FI API 키 (브릿지 경로) | 공개 접근 |
 
 ## 내장 데이터베이스
 
@@ -429,7 +555,7 @@ DEX 스왑 견적을 조회합니다 (ParaSwap 기반, 최적 경로, 가스비 
 - **v0.1** (완료) — 5개 도구: 가격, 트랜잭션 수수료, 잔고, 토큰 정보, ENS
 - **v0.5** (완료) — +4개 도구: decodeTx, getTxStatus, getContractABI, identifyAddress
 - **v1.0** (완료) — +5개 도구: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
-- **v1.5** — +6개 도구: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v1.5** (완료) — +6개 도구: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 
 ## 라이선스
 

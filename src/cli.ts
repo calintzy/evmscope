@@ -4,13 +4,16 @@ import { getClient } from "./shared/rpc-client.js";
 import { cache } from "./shared/cache.js";
 import { getPrice, resolveCoingeckoId, resolveTokenMeta } from "./shared/coingecko.js";
 import { getABI } from "./shared/etherscan.js";
-import { getProtocolData } from "./shared/defillama.js";
+import { getProtocolData, getYieldPools } from "./shared/defillama.js";
 import { fetchQuote } from "./shared/paraswap.js";
-import { formatGwei, formatEther } from "viem";
+import { getTopTokenHolders } from "./shared/ethplorer.js";
+import { checkHoneypotToken } from "./shared/honeypot.js";
+import { fetchBridgeRoutes } from "./shared/lifi.js";
+import { formatGwei, formatEther, parseEther } from "viem";
 import chainsData from "./data/chains.json" with { type: "json" };
 
 const HELP = `
-evmscope v1.0.0 — EVM blockchain intelligence CLI
+evmscope v1.5.0 — EVM blockchain intelligence CLI
 
 Usage:
   evmscope                              Start MCP server (default)
@@ -27,6 +30,12 @@ Commands:
   abi <address> [chain]                 Contract ABI lookup
   tvl <protocol>                        Protocol TVL (DefiLlama)
   swap <tokenIn> <tokenOut> <amount> [chain]  DEX swap quote (ParaSwap)
+  yield [protocol] [chain]              DeFi yield rates (DefiLlama)
+  events <address> [chain]              Contract event logs
+  holders <token> [chain]               Top token holders
+  simulate <from> <to> [data] [chain]   Simulate transaction
+  honeypot <token> [chain]              Honeypot token detection
+  bridge <fromChain> <toChain> <token> <amount>  Cross-chain bridge routes
 
 Options:
   --json                                Output raw JSON
@@ -37,6 +46,9 @@ Examples:
   evmscope compare-gas
   evmscope tvl Aave
   evmscope swap ETH USDC 1.0
+  evmscope yield aave-v3
+  evmscope honeypot 0x...
+  evmscope bridge ethereum arbitrum USDC 100
   evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 `.trim();
 
@@ -279,6 +291,174 @@ async function cmdSwap(tokenIn: string, tokenOut: string, amount: string, chain:
   console.log(`  Gas:    $${quote.gasCostUSD}`);
 }
 
+// --- v1.5 Commands ---
+
+async function cmdYield(protocol: string | undefined, chain: string | undefined, json: boolean) {
+  const pools = await getYieldPools({
+    protocol: protocol || undefined,
+    chain: chain || undefined,
+    minTvl: 1000000,
+  });
+
+  if (json) { console.log(JSON.stringify({ pools, count: pools.length }, null, 2)); return; }
+
+  console.log(`DeFi Yield Rates${protocol ? ` — ${protocol}` : ""}${chain ? ` (${chain})` : ""}`);
+  console.log("─".repeat(70));
+  if (pools.length === 0) { console.log("  No pools found matching criteria"); return; }
+  for (const p of pools) {
+    const apy = p.apy !== null ? `${p.apy.toFixed(2)}%` : "N/A";
+    console.log(`  ${p.project.padEnd(16)} ${p.symbol.padEnd(12)} ${apy.padStart(8)}  TVL ${fmtUsd(p.tvlUsd).padStart(10)}  ${p.chain}`);
+  }
+}
+
+async function cmdEvents(address: string, chain: SupportedChain, json: boolean) {
+  const client = getClient(chain);
+  const latestBlock = await client.getBlockNumber();
+  const fromBlock = latestBlock - 1000n;
+
+  const logs = await client.getLogs({
+    address: address as `0x${string}`,
+    fromBlock,
+    toBlock: latestBlock,
+  });
+
+  const events = logs.slice(0, 20).map((log) => ({
+    txHash: log.transactionHash,
+    blockNumber: Number(log.blockNumber),
+    logIndex: Number(log.logIndex),
+    topics: log.topics.length,
+  }));
+
+  if (json) { console.log(JSON.stringify({ address, chain, events, fromBlock: Number(fromBlock), toBlock: Number(latestBlock) }, null, 2)); return; }
+
+  console.log(`Contract Events — ${chain} (last 1000 blocks)`);
+  console.log(`  Address: ${address}`);
+  console.log(`  Blocks:  ${fromBlock} → ${latestBlock}`);
+  console.log(`  Found:   ${logs.length} events (showing first ${events.length})`);
+  console.log("─".repeat(50));
+  for (const e of events) {
+    console.log(`  Block ${String(e.blockNumber).padEnd(10)} tx ${e.txHash?.slice(0, 18)}...  ${e.topics} topics`);
+  }
+}
+
+async function cmdHolders(token: string, chain: SupportedChain, json: boolean) {
+  let tokenAddress = token;
+  if (!token.startsWith("0x") || token.length !== 42) {
+    const meta = resolveTokenMeta(token, chain);
+    if (!meta) { console.error(`Token '${token}' not found`); process.exit(1); }
+    const addresses = meta.addresses as Record<string, string>;
+    tokenAddress = addresses[chain];
+    if (!tokenAddress) { console.error(`Token '${token}' not available on ${chain}`); process.exit(1); }
+  }
+
+  if (chain === "ethereum") {
+    const result = await getTopTokenHolders(tokenAddress, 10);
+    if (!result) { console.error("Failed to fetch holders"); process.exit(1); }
+    if (json) { console.log(JSON.stringify({ token: tokenAddress, chain, holders: result.holders, totalHolders: result.totalHolders }, null, 2)); return; }
+    console.log(`Top Holders — ${tokenAddress.slice(0, 10)}... (${chain})`);
+    console.log(`  Total holders: ${result.totalHolders.toLocaleString()}`);
+    console.log("─".repeat(50));
+    for (const h of result.holders) {
+      console.log(`  ${h.address.slice(0, 14)}...  ${String(h.balance).padStart(16)}  ${h.share.toFixed(2)}%`);
+    }
+  } else {
+    console.error("Holder data via Ethplorer is Ethereum-only. Use --json with MCP for other chains.");
+    process.exit(1);
+  }
+}
+
+async function cmdSimulate(from: string, to: string, data: string | undefined, chain: SupportedChain, json: boolean) {
+  const client = getClient(chain);
+  const callParams = {
+    account: from as `0x${string}`,
+    to: to as `0x${string}`,
+    ...(data ? { data: data as `0x${string}` } : {}),
+  };
+
+  let success = true;
+  let returnData: string | null = null;
+  let callError: string | null = null;
+
+  try {
+    const result = await client.call(callParams);
+    returnData = result.data ?? null;
+  } catch (err) {
+    success = false;
+    callError = err instanceof Error ? err.message : String(err);
+  }
+
+  let gasEstimate = 21000n;
+  try { gasEstimate = await client.estimateGas(callParams); } catch {}
+
+  if (json) { console.log(JSON.stringify({ success, gasEstimate: gasEstimate.toString(), returnData, error: callError }, null, 2)); return; }
+  console.log(`Transaction Simulation — ${chain}`);
+  console.log(`  From:     ${from}`);
+  console.log(`  To:       ${to}`);
+  console.log(`  Success:  ${success}`);
+  console.log(`  Gas Est:  ${gasEstimate}`);
+  if (returnData) console.log(`  Return:   ${returnData.slice(0, 66)}...`);
+  if (callError) console.log(`  Error:    ${callError.slice(0, 100)}`);
+}
+
+async function cmdHoneypot(token: string, chain: SupportedChain, json: boolean) {
+  let tokenAddress = token;
+  if (!token.startsWith("0x") || token.length !== 42) {
+    const meta = resolveTokenMeta(token, chain);
+    if (!meta) { console.error(`Token '${token}' not found`); process.exit(1); }
+    const addresses = meta.addresses as Record<string, string>;
+    tokenAddress = addresses[chain];
+    if (!tokenAddress) { console.error(`Token '${token}' not available on ${chain}`); process.exit(1); }
+  }
+
+  const result = await checkHoneypotToken(tokenAddress, chain);
+  if (!result) { console.error("Honeypot check failed"); process.exit(1); }
+
+  if (json) { console.log(JSON.stringify(result, null, 2)); return; }
+  const icon = result.riskLevel === "safe" ? "SAFE" : result.riskLevel === "warning" ? "WARN" : "DANGER";
+  console.log(`Honeypot Check — ${chain}`);
+  console.log(`  Token:      ${result.tokenName ?? "unknown"} (${result.tokenSymbol ?? "?"})`);
+  console.log(`  Address:    ${tokenAddress}`);
+  console.log(`  Honeypot:   ${result.isHoneypot ? "YES" : "NO"} [${icon}]`);
+  console.log(`  Buy Tax:    ${result.buyTax}%`);
+  console.log(`  Sell Tax:   ${result.sellTax}%`);
+  if (result.flags.length > 0) console.log(`  Flags:      ${result.flags.join(", ")}`);
+}
+
+async function cmdBridge(fromChain: SupportedChain, toChain: SupportedChain, token: string, amount: string, json: boolean) {
+  const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
+  const upper = token.trim().toUpperCase();
+  let fromAddr: string;
+  let toAddr: string;
+  let decimals = 18;
+
+  if (upper === "ETH" || upper === "POL" || upper === "MATIC") {
+    fromAddr = ETH_ADDRESS;
+    toAddr = ETH_ADDRESS;
+  } else {
+    const meta = resolveTokenMeta(token, fromChain);
+    if (!meta) { console.error(`Token '${token}' not found`); process.exit(1); }
+    decimals = meta.decimals;
+    const addresses = meta.addresses as Record<string, string>;
+    fromAddr = addresses[fromChain];
+    toAddr = addresses[toChain];
+    if (!fromAddr || !toAddr) { console.error(`Token '${token}' not available on both chains`); process.exit(1); }
+  }
+
+  const rawAmount = BigInt(Math.floor(parseFloat(amount) * Math.pow(10, decimals))).toString();
+  const result = await fetchBridgeRoutes(fromChain, toChain, fromAddr, toAddr, rawAmount);
+  if (!result || result.routes.length === 0) { console.error("No bridge routes found"); process.exit(1); }
+
+  if (json) { console.log(JSON.stringify({ fromChain, toChain, token, amount, routes: result.routes }, null, 2)); return; }
+  console.log(`Bridge Routes — ${fromChain} → ${toChain} (${amount} ${token})`);
+  console.log("─".repeat(60));
+  for (let i = 0; i < result.routes.length; i++) {
+    const r = result.routes[i];
+    const out = (Number(BigInt(r.amountOut)) / Math.pow(10, decimals)).toFixed(4);
+    const tag = i === 0 ? " ← best" : "";
+    console.log(`  ${r.bridge.padEnd(14)} ${out.padStart(12)} ${token}  fee $${r.feeUsd.toFixed(2)}  gas $${r.gasCostUsd.toFixed(2)}  ~${r.estimatedTime}s${tag}`);
+  }
+}
+
 // --- Main ---
 
 async function main() {
@@ -338,6 +518,29 @@ async function main() {
       case "swap":
         if (rest.length < 3) { console.error("Usage: evmscope swap <tokenIn> <tokenOut> <amount> [chain]"); process.exit(1); }
         await cmdSwap(rest[0], rest[1], rest[2], parseChain(rest[3]), jsonFlag);
+        break;
+      case "yield":
+        await cmdYield(rest[0], rest[1], jsonFlag);
+        break;
+      case "events":
+        if (!rest[0]) { console.error("Usage: evmscope events <address> [chain]"); process.exit(1); }
+        await cmdEvents(rest[0], parseChain(rest[1]), jsonFlag);
+        break;
+      case "holders":
+        if (!rest[0]) { console.error("Usage: evmscope holders <token> [chain]"); process.exit(1); }
+        await cmdHolders(rest[0], parseChain(rest[1]), jsonFlag);
+        break;
+      case "simulate":
+        if (rest.length < 2) { console.error("Usage: evmscope simulate <from> <to> [data] [chain]"); process.exit(1); }
+        await cmdSimulate(rest[0], rest[1], rest[2]?.startsWith("0x") ? rest[2] : undefined, parseChain(rest[2]?.startsWith("0x") ? rest[3] : rest[2]), jsonFlag);
+        break;
+      case "honeypot":
+        if (!rest[0]) { console.error("Usage: evmscope honeypot <token> [chain]"); process.exit(1); }
+        await cmdHoneypot(rest[0], parseChain(rest[1]), jsonFlag);
+        break;
+      case "bridge":
+        if (rest.length < 4) { console.error("Usage: evmscope bridge <fromChain> <toChain> <token> <amount>"); process.exit(1); }
+        await cmdBridge(parseChain(rest[0]), parseChain(rest[1]), rest[2], rest[3], jsonFlag);
         break;
       default:
         console.error(`Unknown command: ${cmd}`);

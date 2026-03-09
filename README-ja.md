@@ -1,12 +1,12 @@
 # evmscope
 
-AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、承認状態、TVL、クジラ追跡など14のツールを提供する単一MCPサーバー。
+AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TX シミュレーションなど20のツールを提供する単一MCPサーバー。
 
 > 「AgentKitで実行し、evmscopeで判断する。」
 
 ## 特徴
 
-- **14のツール** — 価格、Gas比較、スワップ見積もり、承認状態、TVL、クジラ追跡、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別
+- **20のツール** — 価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TXシミュレーション、イベントログ、トークンホルダー、承認状態、TVL、クジラ追跡、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別
 - **5つのEVMチェーン** — Ethereum、Polygon、Arbitrum、Base、Optimism
 - **49の内蔵トークン** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPEなど
 - **30以上のラベル付きアドレス** — 取引所、DeFiプロトコル、ブリッジ、クジラウォレット
@@ -391,6 +391,72 @@ DEXスワップ見積もりを照会します（ParaSwap基盤、最適ルート
 }
 ```
 
+### getYieldRates
+
+DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チェーン別フィルター）。
+
+```json
+// 入力
+{ "protocol": "aave-v3", "chain": "Ethereum", "minTvl": 1000000 }
+// 出力
+{ "success": true, "data": { "pools": [{ "project": "aave-v3", "symbol": "USDC", "apy": 5.2, "tvlUsd": 500000000 }], "count": 10 } }
+```
+
+### getContractEvents
+
+コントラクトイベントログを照会します（ABI自動デコード）。
+
+```json
+// 入力
+{ "address": "0xA0b8...", "chain": "ethereum", "limit": 5 }
+// 出力
+{ "success": true, "data": { "events": [{ "name": "Transfer", "args": { "from": "0x...", "to": "0x...", "value": "1000000" }, "blockNumber": 19234567 }], "count": 5 } }
+```
+
+### getTokenHolders
+
+トークンのトップホルダーを照会します（Ethereum: Ethplorer、他のチェーン: Etherscan集計）。
+
+```json
+// 入力
+{ "token": "USDC", "chain": "ethereum", "limit": 10 }
+// 出力
+{ "success": true, "data": { "holders": [{ "address": "0x...", "balance": "1000000", "share": 15.5 }], "totalHolders": 12345 } }
+```
+
+### simulateTx
+
+トランザクションをシミュレーションします（eth_call + estimateGas、Gas費用USD換算、revert reasonデコード）。
+
+```json
+// 入力
+{ "from": "0x1234...", "to": "0x5678...", "data": "0xa9059cbb...", "chain": "ethereum" }
+// 出力
+{ "success": true, "data": { "success": true, "gasEstimate": "65000", "gasEstimateUsd": 2.50, "returnData": "0x0000...0001", "error": null } }
+```
+
+### checkHoneypot
+
+ハニーポット（詐欺）トークンを検出します（Honeypot.is基盤、買い/売り税率、リスクレベル）。
+
+```json
+// 入力
+{ "token": "0x...", "chain": "ethereum" }
+// 出力
+{ "success": true, "data": { "isHoneypot": false, "riskLevel": "safe", "buyTax": 0, "sellTax": 0, "flags": [] } }
+```
+
+### getBridgeRoutes
+
+クロスチェーンブリッジルートを照会します（LI.FI基盤、コスト/時間/ルート比較）。
+
+```json
+// 入力
+{ "fromChain": "ethereum", "toChain": "arbitrum", "token": "USDC", "amount": "100" }
+// 出力
+{ "success": true, "data": { "routes": [{ "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "amountOut": "99.50" }], "bestRoute": { "bridge": "Stargate" } } }
+```
+
 ## サポートチェーン
 
 | チェーン | Chain ID | ネイティブトークン |
@@ -414,6 +480,8 @@ DEXスワップ見積もりを照会します（ParaSwap基盤、最適ルート
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan APIキー | ETHERSCAN_KEYにフォールバック |
+| `EVMSCOPE_ETHPLORER_KEY` | Ethplorer APIキー（トークンホルダー） | `freekey` |
+| `EVMSCOPE_LIFI_KEY` | LI.FI APIキー（ブリッジルート） | パブリックアクセス |
 
 ## 内蔵データベース
 
@@ -429,7 +497,7 @@ DEXスワップ見積もりを照会します（ParaSwap基盤、最適ルート
 - **v0.1**（完了）— 5つのツール：価格、トランザクション手数料、残高、トークン情報、ENS
 - **v0.5**（完了）— +4つのツール：decodeTx、getTxStatus、getContractABI、identifyAddress
 - **v1.0**（完了）— +5つのツール：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
-- **v1.5** — +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
+- **v1.5**（完了）— +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 
 ## ライセンス
 

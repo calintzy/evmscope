@@ -15,10 +15,16 @@ import { register as registerGetApprovalStatus } from "./tools/getApprovalStatus
 import { register as registerGetProtocolTVL } from "./tools/getProtocolTVL.js";
 import { register as registerGetWhaleMovements } from "./tools/getWhaleMovements.js";
 import { register as registerGetSwapQuote } from "./tools/getSwapQuote.js";
+import { register as registerGetYieldRates } from "./tools/getYieldRates.js";
+import { register as registerGetContractEvents } from "./tools/getContractEvents.js";
+import { register as registerGetTokenHolders } from "./tools/getTokenHolders.js";
+import { register as registerSimulateTx } from "./tools/simulateTx.js";
+import { register as registerCheckHoneypot } from "./tools/checkHoneypot.js";
+import { register as registerGetBridgeRoutes } from "./tools/getBridgeRoutes.js";
 
 const server = new McpServer({
   name: "evmscope",
-  version: "1.0.0",
+  version: "1.5.0",
 });
 
 // Phase 1 (MVP)
@@ -40,6 +46,14 @@ registerGetApprovalStatus(server);
 registerGetProtocolTVL(server);
 registerGetWhaleMovements(server);
 registerGetSwapQuote(server);
+
+// Phase 4 (v1.5)
+registerGetYieldRates(server);
+registerGetContractEvents(server);
+registerGetTokenHolders(server);
+registerSimulateTx(server);
+registerCheckHoneypot(server);
+registerGetBridgeRoutes(server);
 
 async function main() {
   const transport = new StdioServerTransport();

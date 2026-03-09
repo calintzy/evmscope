@@ -1,6 +1,6 @@
 {
   "name": "evmscope",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "EVM blockchain intelligence toolkit for AI agents (MCP server)",
   "keywords": [
     "mcp",
