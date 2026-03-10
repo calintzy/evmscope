@@ -7,3 +7,4 @@ dist/
 .omc/
 .claude/
 .bkit/
+.mcpregistry_*

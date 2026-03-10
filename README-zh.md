@@ -1,12 +1,12 @@
 # evmscope
 
-面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、NFT 查询、治理提案等 23 个工具。
+面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、NFT 查询、治理提案等 26 个工具。
 
 > "用 AgentKit 执行，用 evmscope 决策。"
 
 ## 特性
 
-- **23 个工具** — 价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、事件日志、代币持有者、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别、NFT 信息、NFT 元数据、治理提案
+- **26 个工具** — 价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、事件日志、代币持有者、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别、NFT 信息、NFT 元数据、治理提案、区块信息、代币转账记录、资产组合
 - **7 条 EVM 链** — Ethereum、Polygon、Arbitrum、Base、Optimism、Avalanche、BSC
 - **49 个内置代币** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPE 等
 - **30+ 标记地址** — 交易所、DeFi 协议、跨链桥、巨鲸钱包
@@ -538,6 +538,71 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 }
 ```
 
+### getBlockInfo
+
+按区块号或最新区块查询详细信息（时间戳、gas、交易数、验证者）。
+
+```json
+// 输入
+{ "blockNumber": 19234567, "chain": "ethereum" }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "number": 19234567,
+    "timestamp": 1741521600,
+    "gasUsed": "12345678",
+    "gasLimit": "30000000",
+    "baseFeePerGas": "20.0",
+    "transactionCount": 150,
+    "miner": "0x1234..."
+  }
+}
+```
+
+### getTokenTransfers
+
+查询钱包地址的最近ERC-20代币转账记录（收入/支出）。
+
+```json
+// 输入
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum", "limit": 5 }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "transfers": [
+      { "token": "USDC", "from": "0x1234...", "to": "0xd8dA...", "value": "1000.00", "direction": "in", "txHash": "0xabc...", "timestamp": 1741521600 }
+    ],
+    "count": 5
+  }
+}
+```
+
+### getPortfolio
+
+查询钱包完整资产组合（原生代币 + ERC-20，USD价值，占比）。
+
+```json
+// 输入
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "address": "0xd8dA...",
+    "native": { "symbol": "ETH", "balance": "1.234", "valueUsd": 2382.50 },
+    "tokens": [
+      { "symbol": "USDC", "balance": "1000.00", "valueUsd": 1000.00, "percentage": 29.6 }
+    ],
+    "totalValueUsd": 3382.50
+  }
+}
+```
+
 ## 支持的链
 
 | 链 | Chain ID | 原生代币 |
@@ -593,6 +658,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 - **v1.5**（已完成）— +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 - **v1.5.1**（已完成）— 代码质量 + 安全重构：7 个新共享模块、链级 RPC URL、缓存大小限制、统一地址验证、CLI 模块化
 - **v1.6.0**（已完成）— +3 个工具：getNFTInfo、getNFTMetadata、getGovernanceProposals。+2 条链：Avalanche、BSC
+- **v1.7.0**（已完成）— +3个工具：getBlockInfo、getTokenTransfers、getPortfolio。安全加固（v1.6.1）
 
 ## 许可证
 

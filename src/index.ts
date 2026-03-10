@@ -24,6 +24,9 @@ import { register as registerGetBridgeRoutes } from "./tools/getBridgeRoutes.js"
 import { register as registerGetNFTInfo } from "./tools/getNFTInfo.js";
 import { register as registerGetNFTMetadata } from "./tools/getNFTMetadata.js";
 import { register as registerGetGovernanceProposals } from "./tools/getGovernanceProposals.js";
+import { register as registerGetTokenTransfers } from "./tools/getTokenTransfers.js";
+import { register as registerGetPortfolio } from "./tools/getPortfolio.js";
+import { register as registerGetBlockInfo } from "./tools/getBlockInfo.js";
 import { VERSION } from "./shared/constants.js";
 
 const server = new McpServer({
@@ -63,6 +66,9 @@ registerGetBridgeRoutes(server);
 registerGetNFTInfo(server);
 registerGetNFTMetadata(server);
 registerGetGovernanceProposals(server);
+registerGetTokenTransfers(server);
+registerGetPortfolio(server);
+registerGetBlockInfo(server);
 
 async function main() {
   const transport = new StdioServerTransport();

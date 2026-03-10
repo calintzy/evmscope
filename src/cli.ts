@@ -17,6 +17,9 @@ import { cmdHoneypot } from "./cli/commands/honeypot.js";
 import { cmdBridge } from "./cli/commands/bridge.js";
 import { cmdNFT, cmdNFTMetadata } from "./cli/commands/nft.js";
 import { cmdGovernance } from "./cli/commands/governance.js";
+import { cmdBlock } from "./cli/commands/block.js";
+import { cmdTransfers } from "./cli/commands/transfers.js";
+import { cmdPortfolio } from "./cli/commands/portfolio.js";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -110,6 +113,17 @@ async function main() {
       case "governance":
         if (!rest[0]) { console.error("Usage: evmscope governance <protocol> [state]"); process.exit(1); }
         await cmdGovernance(rest[0], rest[1] ?? "active", jsonFlag);
+        break;
+      case "block":
+        await cmdBlock(rest[0] ?? "latest", parseChain(rest[1]), jsonFlag);
+        break;
+      case "transfers":
+        if (!rest[0]) { console.error("Usage: evmscope transfers <address> [chain]"); process.exit(1); }
+        await cmdTransfers(rest[0], parseChain(rest[1]), jsonFlag);
+        break;
+      case "portfolio":
+        if (!rest[0]) { console.error("Usage: evmscope portfolio <address> [chain]"); process.exit(1); }
+        await cmdPortfolio(rest[0], parseChain(rest[1]), jsonFlag);
         break;
       default:
         console.error(`Unknown command: ${cmd}`);

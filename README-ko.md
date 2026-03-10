@@ -1,12 +1,12 @@
 # evmscope
 
-AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, NFT 조회, 거버넌스 프로포절 등 23개 도구를 제공하는 단일 MCP 서버.
+AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, NFT 조회, 거버넌스 프로포절 등 26개 도구를 제공하는 단일 MCP 서버.
 
 > "AgentKit으로 실행하고, evmscope로 판단하세요."
 
 ## 특징
 
-- **23개 도구** — 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, 이벤트 로그, 토큰 홀더, 승인 상태, TVL, 고래 추적, 잔고, 토큰 정보, ENS, TX 상태, TX 해석, ABI 조회, 주소 식별, NFT 정보, NFT 메타데이터, 거버넌스 프로포절
+- **26개 도구** — 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, 이벤트 로그, 토큰 홀더, 승인 상태, TVL, 고래 추적, 잔고, 토큰 정보, ENS, TX 상태, TX 해석, ABI 조회, 주소 식별, NFT 정보, NFT 메타데이터, 거버넌스 프로포절, 블록 정보, 토큰 전송 내역, 포트폴리오
 - **7개 EVM 체인** — Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC
 - **49개 내장 토큰** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE 등
 - **30+ 라벨링 주소** — 거래소, DeFi 프로토콜, 브릿지, 고래 지갑
@@ -596,6 +596,71 @@ Snapshot 기반 거버넌스 프로포절을 조회합니다 (active/closed/all)
 }
 ```
 
+### getBlockInfo
+
+블록 번호 또는 최신 블록의 상세 정보(타임스탬프, gas, 트랜잭션 수, 검증자) 조회.
+
+```json
+// 입력
+{ "blockNumber": 19234567, "chain": "ethereum" }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "number": 19234567,
+    "timestamp": 1741521600,
+    "gasUsed": "12345678",
+    "gasLimit": "30000000",
+    "baseFeePerGas": "20.0",
+    "transactionCount": 150,
+    "miner": "0x1234..."
+  }
+}
+```
+
+### getTokenTransfers
+
+지갑 주소의 최근 ERC-20 토큰 전송 내역(입금/출금) 조회.
+
+```json
+// 입력
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum", "limit": 5 }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "transfers": [
+      { "token": "USDC", "from": "0x1234...", "to": "0xd8dA...", "value": "1000.00", "direction": "in", "txHash": "0xabc...", "timestamp": 1741521600 }
+    ],
+    "count": 5
+  }
+}
+```
+
+### getPortfolio
+
+지갑의 전체 자산 포트폴리오(네이티브 + ERC-20, USD 가치, 비율) 조회.
+
+```json
+// 입력
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
+
+// 출력
+{
+  "success": true,
+  "data": {
+    "address": "0xd8dA...",
+    "native": { "symbol": "ETH", "balance": "1.234", "valueUsd": 2382.50 },
+    "tokens": [
+      { "symbol": "USDC", "balance": "1000.00", "valueUsd": 1000.00, "percentage": 29.6 }
+    ],
+    "totalValueUsd": 3382.50
+  }
+}
+```
+
 ## 지원 체인
 
 | 체인 | Chain ID | 네이티브 토큰 |
@@ -651,6 +716,7 @@ Snapshot 기반 거버넌스 프로포절을 조회합니다 (active/closed/all)
 - **v1.5** (완료) — +6개 도구: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 - **v1.5.1** (완료) — 코드 품질 + 보안 리팩토링: 7개 신규 공유 모듈, 체인별 RPC URL, 캐시 크기 상한, 주소 검증 통일, CLI 모듈화
 - **v1.6.0** (완료) — +3개 도구: getNFTInfo, getNFTMetadata, getGovernanceProposals. +2개 체인: Avalanche, BSC
+- **v1.7.0** (완료) — +3개 도구: getBlockInfo, getTokenTransfers, getPortfolio. 보안 강화 (v1.6.1)
 
 ## 라이선스
 

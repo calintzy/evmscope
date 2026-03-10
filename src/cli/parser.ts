@@ -29,6 +29,9 @@ Commands:
   nft <address> <contract> [chain]    NFT balance and token list
   nft-metadata <contract> <tokenId> [chain]  NFT metadata lookup
   governance <protocol> [state]       Governance proposals (Snapshot)
+  block [number] [chain]              Block info (default: latest)
+  transfers <address> [chain]         Recent ERC-20 token transfers
+  portfolio <address> [chain]         Full wallet portfolio with USD values
 
 Options:
   --json                                Output raw JSON

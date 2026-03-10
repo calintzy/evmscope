@@ -2,13 +2,13 @@
 
 [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 23 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 26 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, and more.
 
 > "AgentKit executes. evmscope decides."
 
 ## Features
 
-- **23 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID, NFT info, NFT metadata, governance proposals
+- **26 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID, NFT info, NFT metadata, governance proposals, block info, token transfers, portfolio
 - **7 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC
 - **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
@@ -601,6 +601,71 @@ Get governance proposals from Snapshot (active, closed, or all).
 }
 ```
 
+### getBlockInfo
+
+Block details (timestamp, gas, transactions, validator) by number or latest.
+
+```json
+// Input
+{ "blockNumber": 19234567, "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "number": 19234567,
+    "timestamp": 1741521600,
+    "gasUsed": "12345678",
+    "gasLimit": "30000000",
+    "baseFeePerGas": "20.0",
+    "transactionCount": 150,
+    "miner": "0x1234..."
+  }
+}
+```
+
+### getTokenTransfers
+
+Recent ERC-20 token transfer history for a wallet address.
+
+```json
+// Input
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum", "limit": 5 }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "transfers": [
+      { "token": "USDC", "from": "0x1234...", "to": "0xd8dA...", "value": "1000.00", "direction": "in", "txHash": "0xabc...", "timestamp": 1741521600 }
+    ],
+    "count": 5
+  }
+}
+```
+
+### getPortfolio
+
+Complete wallet portfolio with native + ERC-20 balances and USD values.
+
+```json
+// Input
+{ "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "address": "0xd8dA...",
+    "native": { "symbol": "ETH", "balance": "1.234", "valueUsd": 2382.50 },
+    "tokens": [
+      { "symbol": "USDC", "balance": "1000.00", "valueUsd": 1000.00, "percentage": 29.6 }
+    ],
+    "totalValueUsd": 3382.50
+  }
+}
+```
+
 ## Supported Chains
 
 | Chain | Chain ID | Native Token |
@@ -656,6 +721,7 @@ All environment variables are optional. evmscope works without any configuration
 - **v1.5** (done) — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 - **v1.5.1** (done) — Code quality + security refactoring: 7 new shared modules, per-chain RPC URLs, cache size limits, unified address validation, CLI modularization
 - **v1.6.0** (done) — +3 tools: getNFTInfo, getNFTMetadata, getGovernanceProposals. +2 chains: Avalanche, BSC
+- **v1.7.0** (done) — +3 tools: getBlockInfo, getTokenTransfers, getPortfolio. Security hardening (v1.6.1)
 
 ## License
 

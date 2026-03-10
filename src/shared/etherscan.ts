@@ -4,7 +4,7 @@ import { CHAIN_IDS } from "./constants.js";
 import { logCatchError } from "./logger.js";
 
 // 체인별 Etherscan API URL 매핑
-const EXPLORER_API_URLS: Record<string, string> = {
+export const EXPLORER_API_URLS: Record<string, string> = {
   ethereum: "https://api.etherscan.io/api",
   polygon: "https://api.polygonscan.com/api",
   arbitrum: "https://api.arbiscan.io/api",
@@ -16,7 +16,7 @@ const EXPLORER_API_URLS: Record<string, string> = {
 
 const ABI_CACHE_TTL = 86400; // 24시간
 
-function getApiKey(chain: SupportedChain): string | undefined {
+export function getApiKey(chain: SupportedChain): string | undefined {
   const keyMap: Record<string, string> = {
     ethereum: "EVMSCOPE_ETHERSCAN_KEY",
     polygon: "EVMSCOPE_POLYGONSCAN_KEY",
