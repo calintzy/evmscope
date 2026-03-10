@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { getPrice, resolveCoingeckoId, resolveTokenMeta } from "../shared/coingecko.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface TokenPriceData {
   symbol: string;
@@ -39,7 +40,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
       volume24h: price.volume24h,
     }, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     if (message === "RATE_LIMITED") {
       return makeError("CoinGecko rate limit exceeded. Try again in 30 seconds.", "RATE_LIMITED");
     }

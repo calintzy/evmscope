@@ -1,4 +1,5 @@
 import { cache } from "./cache.js";
+import { isValidSlug } from "./validate.js";
 
 const BASE_URL = "https://api.llama.fi";
 const YIELDS_BASE_URL = "https://yields.llama.fi";
@@ -23,6 +24,8 @@ interface DefiLlamaResponse {
 
 /** DefiLlama에서 프로토콜 데이터 조회 (5분 캐시) */
 export async function getProtocolData(slug: string): Promise<DefiLlamaProtocol | null> {
+  if (!isValidSlug(slug)) return null;
+
   const cacheKey = `defillama:${slug}`;
   const cached = cache.get<DefiLlamaProtocol>(cacheKey);
   if (cached.hit) return cached.data;

@@ -5,6 +5,7 @@ import { makeSuccess, makeError, isSupportedChain } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface TxStatusData {
   hash: string;
@@ -103,7 +104,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Tx
 
     return makeSuccess(chain as SupportedChain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     if (message.includes("not found") || message.includes("could not be found")) {
       return makeError(`Transaction not found: ${txHash}`, "TX_NOT_FOUND");
     }

@@ -6,7 +6,7 @@ import { getClient } from "../shared/rpc-client.js";
 import { getPrice } from "../shared/coingecko.js";
 import { parseEther } from "viem";
 import { getNativeCoingeckoId } from "../shared/chains.js";
-import { isValidAddress } from "../shared/validate.js";
+import { isValidAddress, sanitizeError } from "../shared/validate.js";
 
 interface SimulationData {
   success: boolean;
@@ -55,7 +55,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Si
       returnData = callResult.data ?? null;
     } catch (err) {
       callSuccess = false;
-      callError = err instanceof Error ? err.message : String(err);
+      callError = sanitizeError(err);
     }
 
     // 가스 추정
@@ -92,7 +92,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Si
 
     return makeSuccess(chain, result, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Simulation failed: ${message}`, "RPC_ERROR");
   }
 }

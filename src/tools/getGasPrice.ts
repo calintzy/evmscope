@@ -7,6 +7,7 @@ import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { getPrice, resolveCoingeckoId } from "../shared/coingecko.js";
 import { getNativeCoingeckoId } from "../shared/chains.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface GasEstimate {
   maxFeePerGas: string;
@@ -95,7 +96,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ga
     cache.set(cacheKey, data, GAS_CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch gas price: ${message}`, "RPC_ERROR");
   }
 }

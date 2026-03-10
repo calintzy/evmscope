@@ -5,7 +5,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
-import { isValidAddress } from "../shared/validate.js";
+import { isValidAddress, sanitizeError } from "../shared/validate.js";
 import protocolsData from "../data/protocols.json" with { type: "json" };
 
 // ERC-20 allowance ABI
@@ -134,7 +134,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ap
     cache.set(cacheKey, data, CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to check approvals: ${message}`, "RPC_ERROR");
   }
 }

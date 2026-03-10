@@ -4,6 +4,7 @@ import { makeError } from "../types.js";
 import type { ToolError } from "../types.js";
 import { cache } from "../shared/cache.js";
 import protocolsData from "../data/protocols.json" with { type: "json" };
+import { sanitizeError } from "../shared/validate.js";
 
 // Snapshot GraphQL API 엔드포인트
 const SNAPSHOT_GRAPHQL_URL = "https://hub.snapshot.org/graphql";
@@ -207,7 +208,7 @@ async function handler(
       timestamp: Date.now(),
     };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`거버넌스 프로포절 조회 실패: ${message}`, "API_ERROR");
   }
 }

@@ -4,6 +4,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
+import { isAllowedURL, sanitizeError } from "../shared/validate.js";
 
 // NFT 메타데이터 속성 항목
 interface NFTAttribute {
@@ -103,7 +104,12 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<NF
       }
     }
 
-    // 2단계: URI로 HTTP 요청하여 메타데이터 JSON 취득
+    // 2단계: SSRF 방지 — 내부 네트워크 차단
+    if (!isAllowedURL(resolvedURI)) {
+      return makeError("Metadata URI points to a blocked or invalid address", "INVALID_INPUT");
+    }
+
+    // URI로 HTTP 요청하여 메타데이터 JSON 취득
     let metaJson: Record<string, unknown>;
     try {
       const response = await fetch(resolvedURI, {
@@ -137,8 +143,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<NF
       if (err instanceof Error && (err.name === "AbortError" || err.message.includes("timeout"))) {
         return makeError(`Metadata fetch timed out for tokenId ${tokenId}`, "API_ERROR");
       }
-      const message = err instanceof Error ? err.message : String(err);
-      return makeError(`Failed to fetch metadata: ${message}`, "API_ERROR");
+      return makeError(`Failed to fetch metadata: ${sanitizeError(err)}`, "API_ERROR");
     }
 
     // 3단계: 메타데이터 필드 추출 및 image URI 정규화
@@ -157,8 +162,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<NF
     cache.set(cacheKey, data, NFT_METADATA_CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return makeError(`Failed to fetch NFT metadata: ${message}`, "RPC_ERROR");
+    return makeError(`Failed to fetch NFT metadata: ${sanitizeError(err)}`, "RPC_ERROR");
   }
 }
 

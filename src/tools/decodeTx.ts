@@ -9,6 +9,7 @@ import { getABI, lookup4byte } from "../shared/etherscan.js";
 import { cache } from "../shared/cache.js";
 import signaturesData from "../data/signatures.json" with { type: "json" };
 import { serializeArg } from "../shared/serialize.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface DecodedFunction {
   name: string;
@@ -211,7 +212,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<De
 
     return makeSuccess(chain as SupportedChain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     if (message.includes("not found") || message.includes("could not be found")) {
       return makeError(`Transaction not found: ${txHash}`, "TX_NOT_FOUND");
     }

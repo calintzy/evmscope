@@ -50,29 +50,30 @@ export async function cmdGovernance(
 ) {
   const space = resolveSnapshotSpace(protocol);
 
-  // Snapshot GraphQL 쿼리
-  const whereClause = state === "all"
-    ? `{ space: "${space}" }`
-    : `{ space: "${space}", state: "${state}" }`;
-
-  const query = `{
-    proposals(
-      first: 10,
-      skip: 0,
-      where: ${whereClause},
-      orderBy: "created",
-      orderDirection: desc
-    ) {
-      id title body state author created start end
-      choices scores scores_total quorum votes
-      space { id name }
+  // Snapshot GraphQL 쿼리 (파라미터화된 변수 사용 — 인젝션 방지)
+  const query = `
+    query Proposals($space: String!, $state: String, $first: Int!) {
+      proposals(
+        first: $first,
+        skip: 0,
+        where: { space: $space, state: $state },
+        orderBy: "created",
+        orderDirection: desc
+      ) {
+        id title body state author created start end
+        choices scores scores_total quorum votes
+        space { id name }
+      }
     }
-  }`;
+  `;
+
+  const variables: Record<string, unknown> = { space, first: 10 };
+  if (state !== "all") variables.state = state;
 
   const res = await fetch("https://hub.snapshot.org/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, variables }),
   });
 
   if (!res.ok) {

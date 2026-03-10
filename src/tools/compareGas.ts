@@ -7,6 +7,7 @@ import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { getPrice } from "../shared/coingecko.js";
 import { getNativeCoingeckoId } from "../shared/chains.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface ChainGas {
   chain: SupportedChain;
@@ -88,7 +89,7 @@ async function handler(_args: z.infer<typeof inputSchema>): Promise<ToolResult<C
     cache.set(cacheKey, data, CACHE_TTL);
     return makeSuccess("ethereum", data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to compare gas: ${message}`, "RPC_ERROR");
   }
 }

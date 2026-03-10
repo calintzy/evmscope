@@ -7,8 +7,7 @@ import { getABI } from "../shared/etherscan.js";
 import { cache } from "../shared/cache.js";
 import { decodeEventLog, type Abi } from "viem";
 import { serializeArg } from "../shared/serialize.js";
-import { isValidAddress } from "../shared/validate.js";
-import { MAX_BLOCK_RANGE } from "../shared/validate.js";
+import { isValidAddress, sanitizeError, MAX_BLOCK_RANGE } from "../shared/validate.js";
 
 interface EventData {
   name: string | null;
@@ -110,7 +109,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Co
     cache.set(cacheKey, result, 30);
     return makeSuccess(chain, result, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch events: ${message}`, "RPC_ERROR");
   }
 }

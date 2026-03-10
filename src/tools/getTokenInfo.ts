@@ -6,6 +6,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
 import { tokens as tokensData } from "../shared/tokens.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface TokenInfoData {
   address: string;
@@ -121,7 +122,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
       return makeSuccess(chain, data, false);
     }
 
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch token info: ${message}`, "RPC_ERROR");
   }
 }

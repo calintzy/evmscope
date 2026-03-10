@@ -1,5 +1,6 @@
 import { cache } from "./cache.js";
 import { logCatchError } from "./logger.js";
+import { sanitizeError } from "./validate.js";
 
 const BASE_URL = "https://api.ethplorer.io";
 const HOLDER_CACHE_TTL = 600; // 10분
@@ -63,7 +64,7 @@ export async function getTopTokenHolders(
     cache.set(cacheKey, result, HOLDER_CACHE_TTL);
     return result;
   } catch (err) {
-    logCatchError("ethplorer", err);
+    logCatchError("ethplorer", sanitizeError(err));
     return null;
   }
 }

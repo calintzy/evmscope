@@ -4,6 +4,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
+import { sanitizeError } from "../shared/validate.js";
 
 // ERC-721 NFT 정보 항목
 interface NFTItem {
@@ -157,7 +158,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<NF
     cache.set(cacheKey, data, NFT_INFO_CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch NFT info: ${message}`, "RPC_ERROR");
   }
 }

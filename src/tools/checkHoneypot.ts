@@ -4,6 +4,7 @@ import { SUPPORTED_CHAINS, makeSuccess, makeError } from "../types.js";
 import type { SupportedChain, ToolResult } from "../types.js";
 import { checkHoneypotToken } from "../shared/honeypot.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface HoneypotData {
   token: string;
@@ -53,7 +54,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ho
 
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Honeypot check failed: ${message}`, "API_ERROR");
   }
 }

@@ -3,6 +3,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { makeSuccess, makeError } from "../types.js";
 import type { ToolResult } from "../types.js";
 import { getYieldPools, type YieldPool } from "../shared/defillama.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface YieldRatesData {
   protocol: string | null;
@@ -34,7 +35,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Yi
 
     return makeSuccess("ethereum", result, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch yield rates: ${message}`, "API_ERROR");
   }
 }

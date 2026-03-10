@@ -4,6 +4,7 @@ import { makeSuccess, makeError } from "../types.js";
 import type { ToolResult } from "../types.js";
 import { getProtocolData } from "../shared/defillama.js";
 import protocolsData from "../data/protocols.json" with { type: "json" };
+import { sanitizeError } from "../shared/validate.js";
 
 interface ChainTvl {
   chain: string;
@@ -82,7 +83,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Pr
 
     return makeSuccess("ethereum", result, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch TVL: ${message}`, "API_ERROR");
   }
 }

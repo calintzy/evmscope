@@ -8,6 +8,7 @@ import { cache } from "../shared/cache.js";
 import { getPrice, resolveCoingeckoId } from "../shared/coingecko.js";
 import { tokens as tokensData } from "../shared/tokens.js";
 import { chains } from "../shared/chains.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface TokenBalance {
   symbol: string;
@@ -144,7 +145,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Ba
     cache.set(cacheKey, data, BALANCE_CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch balance: ${message}`, "RPC_ERROR");
   }
 }

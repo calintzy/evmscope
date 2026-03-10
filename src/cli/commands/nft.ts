@@ -1,5 +1,6 @@
 import type { SupportedChain } from "../../types.js";
 import { getClient } from "../../shared/rpc-client.js";
+import { isAllowedURL } from "../../shared/validate.js";
 
 // ERC-721 ABI 조각
 const ERC721_ABI = [
@@ -119,8 +120,14 @@ export async function cmdNFTMetadata(
     fetchUrl = tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
   }
 
-  // 메타데이터 fetch
-  const res = await fetch(fetchUrl);
+  // SSRF 방지 — 내부 네트워크 차단
+  if (!isAllowedURL(fetchUrl)) {
+    console.error("Metadata URI points to a blocked or invalid address");
+    process.exit(1);
+  }
+
+  // 메타데이터 fetch (10초 타임아웃)
+  const res = await fetch(fetchUrl, { signal: AbortSignal.timeout(10000) });
   if (!res.ok) {
     console.error(`Failed to fetch metadata: ${res.status}`);
     process.exit(1);

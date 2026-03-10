@@ -6,6 +6,7 @@ import { getTopTokenHolders } from "../shared/ethplorer.js";
 import { getTokenTransfers } from "../shared/etherscan.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
 import { cache } from "../shared/cache.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface HolderInfo {
   address: string;
@@ -103,7 +104,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<To
       return makeSuccess(chain, data, false);
     }
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch holders: ${message}`, "API_ERROR");
   }
 }

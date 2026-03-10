@@ -5,6 +5,7 @@ import type { SupportedChain, ToolResult } from "../types.js";
 import { fetchQuote } from "../shared/paraswap.js";
 import { resolveTokenMeta } from "../shared/coingecko.js";
 import { NATIVE_TOKEN_ADDRESS } from "../shared/constants.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface SwapQuoteData {
   tokenIn: { symbol: string; address: string; amount: string };
@@ -95,7 +96,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Sw
 
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to get swap quote: ${message}`, "API_ERROR");
   }
 }

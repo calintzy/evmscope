@@ -2,6 +2,7 @@ import { createPublicClient, http, type PublicClient, type Chain } from "viem";
 import { mainnet, polygon, arbitrum, base, optimism, avalanche, bsc } from "viem/chains";
 import type { SupportedChain } from "../types.js";
 import { chains } from "./chains.js";
+import { isValidRpcUrl } from "./validate.js";
 
 const viemChainMap: Record<SupportedChain, Chain> = {
   ethereum: mainnet,
@@ -32,10 +33,8 @@ export function getClient(chain: SupportedChain = "ethereum"): PublicClient {
     if (!config) throw new Error(`Unsupported chain: ${chain}`);
 
     // 체인별 환경변수 → 공통 환경변수 → 기본값 순서
-    const rpcUrl =
-      process.env[RPC_ENV_KEYS[chain]] ||
-      process.env.EVMSCOPE_RPC_URL ||
-      config.rpcUrl;
+    const envUrl = process.env[RPC_ENV_KEYS[chain]] || process.env.EVMSCOPE_RPC_URL;
+    const rpcUrl = envUrl && isValidRpcUrl(envUrl) ? envUrl : config.rpcUrl;
 
     clients.set(
       chain,

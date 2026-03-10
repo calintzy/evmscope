@@ -6,6 +6,7 @@ import { cache } from "../shared/cache.js";
 import { getTokenTransfers } from "../shared/etherscan.js";
 import { resolveTokenMeta, resolveCoingeckoId, getPrice } from "../shared/coingecko.js";
 import { getLabel, isExchangeAddress } from "../shared/labels.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface Movement {
   txHash: string;
@@ -137,7 +138,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<Wh
     cache.set(cacheKey, data, CACHE_TTL);
     return makeSuccess(chain, data, false);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const message = sanitizeError(err);
     return makeError(`Failed to fetch whale movements: ${message}`, "API_ERROR");
   }
 }

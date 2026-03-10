@@ -1,6 +1,7 @@
 import { cache } from "./cache.js";
 import { CHAIN_IDS } from "./constants.js";
 import { logCatchError } from "./logger.js";
+import { isValidAddress } from "./validate.js";
 
 const BASE_URL = "https://api.honeypot.is/v2";
 const HONEYPOT_CACHE_TTL = 3600; // 1시간
@@ -21,6 +22,7 @@ export async function checkHoneypotToken(
   tokenAddress: string,
   chain: string,
 ): Promise<HoneypotResult | null> {
+  if (!isValidAddress(tokenAddress)) return null;
   const chainId = CHAIN_IDS[chain as keyof typeof CHAIN_IDS];
   if (!chainId) return null;
 

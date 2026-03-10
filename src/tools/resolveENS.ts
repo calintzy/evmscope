@@ -6,6 +6,7 @@ import { makeSuccess, makeError } from "../types.js";
 import type { ToolResult } from "../types.js";
 import { getClient } from "../shared/rpc-client.js";
 import { cache } from "../shared/cache.js";
+import { sanitizeError } from "../shared/validate.js";
 
 interface ENSData {
   name: string | null;
@@ -58,7 +59,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<EN
       cache.set(cacheKey, data, ENS_CACHE_TTL);
       return makeSuccess(chain, data, false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = sanitizeError(err);
       return makeError(`ENS reverse lookup failed: ${message}`, "ENS_NOT_FOUND");
     }
   } else {
@@ -96,7 +97,7 @@ async function handler(args: z.infer<typeof inputSchema>): Promise<ToolResult<EN
       cache.set(cacheKey, data, ENS_CACHE_TTL);
       return makeSuccess(chain, data, false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
+      const message = sanitizeError(err);
       return makeError(`ENS resolution failed: ${message}`, "ENS_NOT_FOUND");
     }
   }
