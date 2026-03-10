@@ -1,5 +1,7 @@
 # evmscope
 
+[English](README.md) | [한국어](README-ko.md) | [日本語](README-ja.md) | [Español](README-es.md) | [Русский](README-ru.md)
+
 EVM区块链智能工具包。7条链上26个工具 — 可作为CLI或MCP服务器使用。代币价格、Gas对比、交换报价、DeFi收益率、蜜罐检测、跨链桥路由、交易模拟、NFT查询、治理提案、投资组合追踪等。
 
 ## 特性

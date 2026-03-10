@@ -1,20 +1,20 @@
 # evmscope
 
-[한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md) | [Español](README-es.md) | [Русский](README-ru.md)
+[English](README.md) | [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md) | [Русский](README-ru.md)
 
-EVM blockchain intelligence toolkit. 26 tools across 7 chains — use as a CLI or MCP server. Token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, portfolio tracking, and more.
+Kit de inteligencia para blockchain EVM. 26 herramientas en 7 cadenas — úselo como CLI o servidor MCP. Precio del token, comparación de gas, cotización de swap, tasas de rendimiento, detección de honeypot, rutas de puente, simulación de transacciones, consulta de NFT, propuestas de gobernanza, seguimiento de portafolio, y más.
 
-## Features
+## Características
 
-- **26 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID, NFT info, NFT metadata, governance proposals, block info, token transfers, portfolio
-- **7 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC
-- **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
-- **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
-- **Zero config** — No API keys required. Works out of the box with free public APIs
-- **Read-only** — No transaction execution. Zero risk of fund loss
-- **Dual mode** — CLI for direct terminal use, MCP server for AI agent integration
+- **26 herramientas** — Precio, comparación de gas, cotización de swap, tasas de rendimiento, detección de honeypot, rutas de puente, simulación de transacciones, registros de eventos, poseedores de tokens, estado de aprobación, TVL, seguimiento de ballenas, saldo, información de token, ENS, estado de transacción, decodificación de transacción, consulta de ABI, identificación de dirección, información de NFT, metadatos de NFT, propuestas de gobernanza, información de bloque, transferencias de tokens, portafolio
+- **7 cadenas EVM** — Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC
+- **49 tokens integrados** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, y más
+- **Más de 30 direcciones etiquetadas** — Exchanges, protocolos DeFi, puentes, carteras de ballenas
+- **Cero configuración** — No se requieren claves API. Funciona de inmediato con APIs públicas gratuitas
+- **Solo lectura** — Sin ejecución de transacciones. Cero riesgo de pérdida de fondos
+- **Modo dual** — CLI para uso directo en terminal, servidor MCP para integración con agentes de IA
 
-## Quick Start
+## Inicio Rápido
 
 ### CLI
 
@@ -31,11 +31,11 @@ npx evmscope transfers 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 npx evmscope honeypot 0x...
 ```
 
-Run `npx evmscope --help` to see all 22 commands. Add `--json` for raw JSON output.
+Ejecute `npx evmscope --help` para ver los 22 comandos disponibles. Agregue `--json` para obtener salida en JSON sin formato.
 
-### MCP Server
+### Servidor MCP
 
-Start as an MCP server (no arguments):
+Inicie como servidor MCP (sin argumentos):
 
 ```bash
 npx evmscope
@@ -49,7 +49,7 @@ claude mcp add evmscope -- npx -y evmscope
 
 ### Claude Desktop
 
-Add to `claude_desktop_config.json`:
+Agregue a `claude_desktop_config.json`:
 
 ```json
 {
@@ -64,7 +64,7 @@ Add to `claude_desktop_config.json`:
 
 ### Cursor
 
-Add to `.cursor/mcp.json`:
+Agregue a `.cursor/mcp.json`:
 
 ```json
 {
@@ -77,17 +77,17 @@ Add to `.cursor/mcp.json`:
 }
 ```
 
-## Tools
+## Herramientas
 
 ### getTokenPrice
 
-Get current token price, 24h change, market cap, and volume.
+Obtiene el precio actual del token, cambio en 24h, capitalización de mercado y volumen.
 
 ```json
-// Input
+// Entrada
 { "token": "ETH", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -103,13 +103,13 @@ Get current token price, 24h change, market cap, and volume.
 
 ### getGasPrice
 
-Get current gas prices in slow/normal/fast tiers with USD estimates.
+Obtiene los precios de gas actuales en niveles lento/normal/rápido con estimaciones en USD.
 
 ```json
-// Input
+// Entrada
 { "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -124,13 +124,13 @@ Get current gas prices in slow/normal/fast tiers with USD estimates.
 
 ### getBalance
 
-Get native token + ERC-20 token balances with USD values.
+Obtiene saldos del token nativo y tokens ERC-20 con valores en USD.
 
 ```json
-// Input
+// Entrada
 { "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -146,13 +146,13 @@ Get native token + ERC-20 token balances with USD values.
 
 ### getTokenInfo
 
-Get ERC-20 token metadata (name, symbol, decimals, total supply).
+Obtiene metadatos del token ERC-20 (nombre, símbolo, decimales, suministro total).
 
 ```json
-// Input
+// Entrada
 { "token": "USDC", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -167,13 +167,13 @@ Get ERC-20 token metadata (name, symbol, decimals, total supply).
 
 ### resolveENS
 
-Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
+Resuelve nombres ENS a direcciones y viceversa (solo red principal de Ethereum).
 
 ```json
-// Input
+// Entrada
 { "nameOrAddress": "vitalik.eth" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -187,13 +187,13 @@ Resolve ENS names to addresses and vice versa (Ethereum mainnet only).
 
 ### getTxStatus
 
-Get transaction status, receipt, confirmations, and gas usage.
+Obtiene el estado de la transacción, recibo, confirmaciones y uso de gas.
 
 ```json
-// Input
+// Entrada
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -213,13 +213,13 @@ Get transaction status, receipt, confirmations, and gas usage.
 
 ### decodeTx
 
-Decode a transaction into structured JSON — function name, parameters, event logs.
+Decodifica una transacción en JSON estructurado — nombre de función, parámetros, registros de eventos.
 
 ```json
-// Input
+// Entrada
 { "txHash": "0xabc...def", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -244,13 +244,13 @@ Decode a transaction into structured JSON — function name, parameters, event l
 
 ### getContractABI
 
-Look up a verified contract's ABI (Etherscan → Sourcify fallback).
+Consulta el ABI de un contrato verificado (Etherscan con Sourcify como respaldo).
 
 ```json
-// Input
+// Entrada
 { "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -267,13 +267,13 @@ Look up a verified contract's ABI (Etherscan → Sourcify fallback).
 
 ### identifyAddress
 
-Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
+Identifica una dirección — exchange, protocolo DeFi, cartera de ballena o EOA.
 
 ```json
-// Input
+// Entrada
 { "address": "0x28C6c06298d514Db089934071355E5743bf21d60", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -289,13 +289,13 @@ Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
 
 ### compareGas
 
-Compare gas fees across all 7 EVM chains at once, sorted by lowest cost.
+Compara las comisiones de gas en las 7 cadenas EVM a la vez, ordenadas de menor a mayor costo.
 
 ```json
-// Input
+// Entrada
 {}
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -314,13 +314,13 @@ Compare gas fees across all 7 EVM chains at once, sorted by lowest cost.
 
 ### getApprovalStatus
 
-Check ERC-20 token approval (allowance) status. Auto-checks major DeFi protocols with risk level assessment.
+Verifica el estado de aprobación (allowance) de tokens ERC-20. Comprueba automáticamente los principales protocolos DeFi con evaluación del nivel de riesgo.
 
 ```json
-// Input
+// Entrada
 { "owner": "0xd8dA...", "token": "USDC", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -337,13 +337,13 @@ Check ERC-20 token approval (allowance) status. Auto-checks major DeFi protocols
 
 ### getProtocolTVL
 
-Get DeFi protocol TVL (Total Value Locked) via DefiLlama — chain breakdown, 24h/7d changes.
+Obtiene el TVL (Valor Total Bloqueado) de un protocolo DeFi mediante DefiLlama — desglose por cadena, cambios en 24h/7d.
 
 ```json
-// Input
+// Entrada
 { "protocol": "Aave" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -362,13 +362,13 @@ Get DeFi protocol TVL (Total Value Locked) via DefiLlama — chain breakdown, 24
 
 ### getWhaleMovements
 
-Track large token transfers (whale movements). Classifies exchange deposit/withdrawal direction.
+Rastrea grandes transferencias de tokens (movimientos de ballenas). Clasifica la dirección de depósito/retiro en exchanges.
 
 ```json
-// Input
+// Entrada
 { "token": "USDC", "chain": "ethereum", "minValueUsd": 100000, "limit": 10 }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -384,13 +384,13 @@ Track large token transfers (whale movements). Classifies exchange deposit/withd
 
 ### getSwapQuote
 
-Get DEX swap quotes via ParaSwap — optimal route, gas cost, auto ETH→WETH conversion.
+Obtiene cotizaciones de swap en DEX mediante ParaSwap — ruta óptima, costo de gas, conversión automática ETH→WETH.
 
 ```json
-// Input
+// Entrada
 { "tokenIn": "ETH", "tokenOut": "USDC", "amountIn": "1.0", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -406,13 +406,13 @@ Get DEX swap quotes via ParaSwap — optimal route, gas cost, auto ETH→WETH co
 
 ### getYieldRates
 
-Get DeFi yield rates (APY) from DefiLlama. Filter by protocol, chain, minimum TVL.
+Obtiene tasas de rendimiento DeFi (APY) de DefiLlama. Filtre por protocolo, cadena y TVL mínimo.
 
 ```json
-// Input
+// Entrada
 { "protocol": "aave-v3", "chain": "Ethereum", "minTvl": 1000000 }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -426,13 +426,13 @@ Get DeFi yield rates (APY) from DefiLlama. Filter by protocol, chain, minimum TV
 
 ### getContractEvents
 
-Get contract event logs with automatic ABI decoding.
+Obtiene registros de eventos de contratos con decodificación automática de ABI.
 
 ```json
-// Input
+// Entrada
 { "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "chain": "ethereum", "limit": 5 }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -448,13 +448,13 @@ Get contract event logs with automatic ABI decoding.
 
 ### getTokenHolders
 
-Get top token holders. Ethereum uses Ethplorer, other chains aggregate from Etherscan transfers.
+Obtiene los principales poseedores de un token. Ethereum usa Ethplorer; otras cadenas agregan datos desde transferencias de Etherscan.
 
 ```json
-// Input
+// Entrada
 { "token": "USDC", "chain": "ethereum", "limit": 10 }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -469,13 +469,13 @@ Get top token holders. Ethereum uses Ethplorer, other chains aggregate from Ethe
 
 ### simulateTx
 
-Simulate a transaction via eth_call + estimateGas. Returns gas estimate in USD and revert reason on failure.
+Simula una transacción mediante eth_call + estimateGas. Devuelve la estimación de gas en USD y el motivo de reversión en caso de fallo.
 
 ```json
-// Input
+// Entrada
 { "from": "0x1234...", "to": "0x5678...", "data": "0xa9059cbb...", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -490,13 +490,13 @@ Simulate a transaction via eth_call + estimateGas. Returns gas estimate in USD a
 
 ### checkHoneypot
 
-Detect honeypot (scam) tokens via Honeypot.is. Returns buy/sell tax, risk level, and flags.
+Detecta tokens honeypot (estafa) mediante Honeypot.is. Devuelve impuesto de compra/venta, nivel de riesgo y alertas.
 
 ```json
-// Input
+// Entrada
 { "token": "0x...", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -513,13 +513,13 @@ Detect honeypot (scam) tokens via Honeypot.is. Returns buy/sell tax, risk level,
 
 ### getBridgeRoutes
 
-Get cross-chain bridge routes via LI.FI. Compares fees, time, and output amount.
+Obtiene rutas de puente entre cadenas mediante LI.FI. Compara comisiones, tiempo y monto de salida.
 
 ```json
-// Input
+// Entrada
 { "fromChain": "ethereum", "toChain": "arbitrum", "token": "USDC", "amount": "100" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -533,13 +533,13 @@ Get cross-chain bridge routes via LI.FI. Compares fees, time, and output amount.
 
 ### getNFTInfo
 
-Get ERC-721 NFT balance and token list for a wallet.
+Obtiene el saldo ERC-721 y la lista de tokens de una cartera.
 
 ```json
-// Input
+// Entrada
 { "address": "0xd8dA...", "contractAddress": "0x...", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -556,13 +556,13 @@ Get ERC-721 NFT balance and token list for a wallet.
 
 ### getNFTMetadata
 
-Get metadata for a specific NFT token (name, image, attributes).
+Obtiene los metadatos de un token NFT específico (nombre, imagen, atributos).
 
 ```json
-// Input
+// Entrada
 { "contractAddress": "0x...", "tokenId": "1234", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -583,13 +583,13 @@ Get metadata for a specific NFT token (name, image, attributes).
 
 ### getGovernanceProposals
 
-Get governance proposals from Snapshot (active, closed, or all).
+Obtiene propuestas de gobernanza desde Snapshot (activas, cerradas o todas).
 
 ```json
-// Input
+// Entrada
 { "protocol": "uniswap", "state": "active" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -614,13 +614,13 @@ Get governance proposals from Snapshot (active, closed, or all).
 
 ### getBlockInfo
 
-Block details (timestamp, gas, transactions, validator) by number or latest.
+Detalles del bloque (marca de tiempo, gas, transacciones, validador) por número o el más reciente.
 
 ```json
-// Input
+// Entrada
 { "blockNumber": 19234567, "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -637,13 +637,13 @@ Block details (timestamp, gas, transactions, validator) by number or latest.
 
 ### getTokenTransfers
 
-Recent ERC-20 token transfer history for a wallet address.
+Historial reciente de transferencias de tokens ERC-20 para una dirección de cartera.
 
 ```json
-// Input
+// Entrada
 { "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum", "limit": 5 }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -657,13 +657,13 @@ Recent ERC-20 token transfer history for a wallet address.
 
 ### getPortfolio
 
-Complete wallet portfolio with native + ERC-20 balances and USD values.
+Portafolio completo de la cartera con saldos nativos y ERC-20, y valores en USD.
 
 ```json
-// Input
+// Entrada
 { "address": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045", "chain": "ethereum" }
 
-// Output
+// Salida
 {
   "success": true,
   "data": {
@@ -677,10 +677,10 @@ Complete wallet portfolio with native + ERC-20 balances and USD values.
 }
 ```
 
-## Supported Chains
+## Cadenas Compatibles
 
-| Chain | Chain ID | Native Token |
-|-------|----------|-------------|
+| Cadena | Chain ID | Token Nativo |
+|--------|----------|--------------|
 | Ethereum | 1 | ETH |
 | Polygon | 137 | POL |
 | Arbitrum | 42161 | ETH |
@@ -689,51 +689,51 @@ Complete wallet portfolio with native + ERC-20 balances and USD values.
 | Avalanche | 43114 | AVAX |
 | BSC | 56 | BNB |
 
-## Environment Variables (Optional)
+## Variables de Entorno (Opcionales)
 
-All environment variables are optional. evmscope works without any configuration.
+Todas las variables de entorno son opcionales. evmscope funciona sin ninguna configuración.
 
-| Variable | Purpose | Default |
-|----------|---------|---------|
-| `EVMSCOPE_RPC_URL` | Custom RPC endpoint (all chains) | Public RPC |
-| `EVMSCOPE_RPC_URL_ETHEREUM` | Ethereum-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_POLYGON` | Polygon-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_BASE` | Base-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_AVALANCHE` | Avalanche-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_RPC_URL_BSC` | BSC-specific RPC endpoint | Falls back to RPC_URL |
-| `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
-| `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
-| `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_SNOWTRACE_KEY` | Snowtrace API key (Avalanche) | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_BSCSCAN_KEY` | BscScan API key (BSC) | Falls back to ETHERSCAN_KEY |
-| `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API key (token holders) | `freekey` |
-| `EVMSCOPE_LIFI_KEY` | LI.FI API key (bridge routes) | Public access |
-| `EVMSCOPE_DEBUG` | Enable debug logging (set to `1`) | Disabled |
+| Variable | Propósito | Valor por defecto |
+|----------|-----------|-------------------|
+| `EVMSCOPE_RPC_URL` | Endpoint RPC personalizado (todas las cadenas) | RPC público |
+| `EVMSCOPE_RPC_URL_ETHEREUM` | Endpoint RPC específico para Ethereum | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_POLYGON` | Endpoint RPC específico para Polygon | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_ARBITRUM` | Endpoint RPC específico para Arbitrum | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_BASE` | Endpoint RPC específico para Base | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_OPTIMISM` | Endpoint RPC específico para Optimism | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_AVALANCHE` | Endpoint RPC específico para Avalanche | Usa RPC_URL como respaldo |
+| `EVMSCOPE_RPC_URL_BSC` | Endpoint RPC específico para BSC | Usa RPC_URL como respaldo |
+| `EVMSCOPE_COINGECKO_KEY` | Clave API de CoinGecko (límites de tasa más altos) | Nivel gratuito |
+| `EVMSCOPE_ETHERSCAN_KEY` | Clave API de Etherscan (límites de tasa más altos) | Nivel gratuito |
+| `EVMSCOPE_POLYGONSCAN_KEY` | Clave API de Polygonscan | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_ARBISCAN_KEY` | Clave API de Arbiscan | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_BASESCAN_KEY` | Clave API de Basescan | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_OPTIMISTIC_KEY` | Clave API de Optimistic Etherscan | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_SNOWTRACE_KEY` | Clave API de Snowtrace (Avalanche) | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_BSCSCAN_KEY` | Clave API de BscScan (BSC) | Usa ETHERSCAN_KEY como respaldo |
+| `EVMSCOPE_ETHPLORER_KEY` | Clave API de Ethplorer (poseedores de tokens) | `freekey` |
+| `EVMSCOPE_LIFI_KEY` | Clave API de LI.FI (rutas de puente) | Acceso público |
+| `EVMSCOPE_DEBUG` | Habilita el registro de depuración (establecer en `1`) | Deshabilitado |
 
-## Built-in Databases
+## Bases de Datos Integradas
 
-| Database | Contents |
-|----------|----------|
-| `tokens.json` | 49 major tokens with multi-chain addresses and CoinGecko IDs |
-| `signatures.json` | 36 common function signatures (ERC-20, DEX, lending, NFT) |
-| `labels.json` | 30 labeled addresses (exchanges, bridges, whale wallets) |
-| `protocols.json` | 10 DeFi protocols with multi-chain contract addresses |
+| Base de datos | Contenido |
+|---------------|-----------|
+| `tokens.json` | 49 tokens principales con direcciones en múltiples cadenas e IDs de CoinGecko |
+| `signatures.json` | 36 firmas de funciones comunes (ERC-20, DEX, préstamos, NFT) |
+| `labels.json` | 30 direcciones etiquetadas (exchanges, puentes, carteras de ballenas) |
+| `protocols.json` | 10 protocolos DeFi con direcciones de contratos en múltiples cadenas |
 
-## Roadmap
+## Hoja de Ruta
 
-- **v0.1** (done) — 5 tools: price, transaction fees, balance, token info, ENS
-- **v0.5** (done) — +4 tools: decodeTx, getTxStatus, getContractABI, identifyAddress
-- **v1.0** (done) — +5 tools: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
-- **v1.5** (done) — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
-- **v1.5.1** (done) — Code quality + security refactoring: 7 new shared modules, per-chain RPC URLs, cache size limits, unified address validation, CLI modularization
-- **v1.6.0** (done) — +3 tools: getNFTInfo, getNFTMetadata, getGovernanceProposals. +2 chains: Avalanche, BSC
-- **v1.7.0** (done) — +3 tools: getBlockInfo, getTokenTransfers, getPortfolio. Security hardening (v1.6.1)
+- **v0.1** (completado) — 5 herramientas: price, transaction fees, balance, token info, ENS
+- **v0.5** (completado) — +4 herramientas: decodeTx, getTxStatus, getContractABI, identifyAddress
+- **v1.0** (completado) — +5 herramientas: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
+- **v1.5** (completado) — +6 herramientas: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
+- **v1.5.1** (completado) — Calidad de código y refactorización de seguridad: 7 nuevos módulos compartidos, URLs de RPC por cadena, límites de tamaño de caché, validación de direcciones unificada, modularización del CLI
+- **v1.6.0** (completado) — +3 herramientas: getNFTInfo, getNFTMetadata, getGovernanceProposals. +2 cadenas: Avalanche, BSC
+- **v1.7.0** (completado) — +3 herramientas: getBlockInfo, getTokenTransfers, getPortfolio. Refuerzo de seguridad (v1.6.1)
 
-## License
+## Licencia
 
 [MIT](LICENSE)

@@ -1,5 +1,7 @@
 # evmscope
 
+[English](README.md) | [한국어](README-ko.md) | [中文](README-zh.md) | [Español](README-es.md) | [Русский](README-ru.md)
+
 EVMブロックチェーンインテリジェンスツールキット。7チェーンで26ツール — CLIまたはMCPサーバーとして使用。トークン価格、ガス比較、スワップ見積、DeFi利回り、ハニーポット検出、ブリッジルート、TX シミュレーション、NFT検索、ガバナンス提案、ポートフォリオ追跡など。
 
 ## 特徴

@@ -1,5 +1,7 @@
 # evmscope
 
+[English](README.md) | [中文](README-zh.md) | [日本語](README-ja.md) | [Español](README-es.md) | [Русский](README-ru.md)
+
 EVM 블록체인 인텔리전스 툴킷. 7개 체인에서 26개 도구 — CLI 또는 MCP 서버로 사용. 토큰 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, NFT 조회, 거버넌스 프로포절, 포트폴리오 추적 등.
 
 ## 특징
