@@ -46,6 +46,21 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: 이미 배포된 버전인지 확인
+        id: version-check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED=$(npm view evmscope versions --json 2>/dev/null || echo "[]")
+          if echo "$PUBLISHED" | grep -q "\"$PACKAGE_VERSION\""; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "⏭️ v$PACKAGE_VERSION 이미 배포됨 — 스킵"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "📦 v$PACKAGE_VERSION 배포 시작"
+          fi
+
       - run: npm publish
+        if: steps.version-check.outputs.skip != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
