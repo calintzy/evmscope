@@ -1,8 +1,6 @@
 # evmscope
 
-面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、NFT 查询、治理提案等 26 个工具。
-
-> "用 AgentKit 执行，用 evmscope 决策。"
+EVM区块链智能工具包。7条链上26个工具 — 可作为CLI或MCP服务器使用。代币价格、Gas对比、交换报价、DeFi收益率、蜜罐检测、跨链桥路由、交易模拟、NFT查询、治理提案、投资组合追踪等。
 
 ## 特性
 
@@ -12,27 +10,40 @@
 - **30+ 标记地址** — 交易所、DeFi 协议、跨链桥、巨鲸钱包
 - **零配置** — 无需 API 密钥，使用免费公共 API 即刻运行
 - **只读模式** — 无交易执行功能，零资金损失风险
-- **内置回退** — 代币/签名/标签内置数据库，支持离线运行
+- **双模式** — CLI直接终端使用 + MCP服务器AI代理集成
 
 ## 快速开始
+
+### CLI
+
+```bash
+npx evmscope price ETH
+npx evmscope gas
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope portfolio 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope block latest
+npx evmscope transfers 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope honeypot 0x...
+```
+
+运行 `npx evmscope --help` 查看全部22个命令。添加 `--json` 获取JSON输出。
+
+### MCP服务器
+
+无参数启动MCP服务器：
 
 ```bash
 npx evmscope
 ```
 
-### CLI 模式
-
-无需 AI 客户端，直接在终端中使用：
+### Claude Code
 
 ```bash
-npx evmscope price ETH
-npx evmscope compare-gas
-npx evmscope tvl Aave
-npx evmscope swap ETH USDC 1.0
-npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+claude mcp add evmscope -- npx -y evmscope
 ```
-
-运行 `npx evmscope --help` 查看所有命令。添加 `--json` 获取原始 JSON 输出。
 
 ### Claude Desktop
 

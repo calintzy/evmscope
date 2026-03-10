@@ -1,8 +1,6 @@
 # evmscope
 
-AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, NFT 조회, 거버넌스 프로포절 등 26개 도구를 제공하는 단일 MCP 서버.
-
-> "AgentKit으로 실행하고, evmscope로 판단하세요."
+EVM 블록체인 인텔리전스 툴킷. 7개 체인에서 26개 도구 — CLI 또는 MCP 서버로 사용. 토큰 가격, 트랜잭션 수수료 비교, 스왑 견적, DeFi 수익률, 허니팟 탐지, 브릿지 경로, TX 시뮬레이션, NFT 조회, 거버넌스 프로포절, 포트폴리오 추적 등.
 
 ## 특징
 
@@ -12,27 +10,40 @@ AI 에이전트를 위한 EVM 블록체인 인텔리전스 툴킷. 토큰 가격
 - **30+ 라벨링 주소** — 거래소, DeFi 프로토콜, 브릿지, 고래 지갑
 - **제로 설정** — API 키 불필요. 무료 공개 API로 즉시 동작
 - **읽기 전용** — 트랜잭션 실행 기능 없음. 자금 손실 위험 제로
-- **내장 폴백** — 토큰/시그니처/라벨 내장 DB로 오프라인 동작 가능
+- **듀얼 모드** — 터미널 직접 사용을 위한 CLI + AI 에이전트 통합을 위한 MCP 서버
 
 ## 빠른 시작
+
+### CLI
+
+```bash
+npx evmscope price ETH
+npx evmscope gas
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope portfolio 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope block latest
+npx evmscope transfers 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope honeypot 0x...
+```
+
+`npx evmscope --help`로 전체 22개 명령어를 확인하세요. `--json` 플래그로 JSON 출력도 가능합니다.
+
+### MCP 서버
+
+MCP 서버로 시작 (인수 없이):
 
 ```bash
 npx evmscope
 ```
 
-### CLI 모드
-
-AI 클라이언트 없이 터미널에서 직접 사용할 수 있습니다:
+### Claude Code
 
 ```bash
-npx evmscope price ETH
-npx evmscope compare-gas
-npx evmscope tvl Aave
-npx evmscope swap ETH USDC 1.0
-npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+claude mcp add evmscope -- npx -y evmscope
 ```
-
-`npx evmscope --help`로 전체 명령어를 확인하세요. `--json` 플래그로 JSON 출력도 가능합니다.
 
 ### Claude Desktop
 

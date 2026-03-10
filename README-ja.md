@@ -1,8 +1,6 @@
 # evmscope
 
-AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TXシミュレーション、NFT照会、ガバナンス提案など26のツールを提供する単一MCPサーバー。
-
-> 「AgentKitで実行し、evmscopeで判断する。」
+EVMブロックチェーンインテリジェンスツールキット。7チェーンで26ツール — CLIまたはMCPサーバーとして使用。トークン価格、ガス比較、スワップ見積、DeFi利回り、ハニーポット検出、ブリッジルート、TX シミュレーション、NFT検索、ガバナンス提案、ポートフォリオ追跡など。
 
 ## 特徴
 
@@ -12,27 +10,40 @@ AIエージェント向けEVMブロックチェーンインテリジェンスツ
 - **30以上のラベル付きアドレス** — 取引所、DeFiプロトコル、ブリッジ、クジラウォレット
 - **ゼロ設定** — APIキー不要。無料パブリックAPIで即座に動作
 - **読み取り専用** — トランザクション実行機能なし。資金損失リスクゼロ
-- **内蔵フォールバック** — トークン/署名/ラベル内蔵DBでオフライン動作可能
+- **デュアルモード** — ターミナル直接使用のCLI + AIエージェント統合のMCPサーバー
 
 ## クイックスタート
+
+### CLI
+
+```bash
+npx evmscope price ETH
+npx evmscope gas
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope portfolio 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope block latest
+npx evmscope transfers 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope honeypot 0x...
+```
+
+`npx evmscope --help` で全22コマンドを確認。`--json` フラグでJSON出力も可能。
+
+### MCPサーバー
+
+MCPサーバーとして起動（引数なし）：
 
 ```bash
 npx evmscope
 ```
 
-### CLIモード
-
-AIクライアント不要。ターミナルから直接利用できます：
+### Claude Code
 
 ```bash
-npx evmscope price ETH
-npx evmscope compare-gas
-npx evmscope tvl Aave
-npx evmscope swap ETH USDC 1.0
-npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+claude mcp add evmscope -- npx -y evmscope
 ```
-
-`npx evmscope --help`で全コマンドを確認。`--json`フラグでJSON出力も可能です。
 
 ### Claude Desktop
 

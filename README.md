@@ -2,9 +2,7 @@
 
 [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 26 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, and more.
-
-> "AgentKit executes. evmscope decides."
+EVM blockchain intelligence toolkit. 26 tools across 7 chains — use as a CLI or MCP server. Token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, portfolio tracking, and more.
 
 ## Features
 
@@ -14,27 +12,40 @@ EVM blockchain intelligence toolkit for AI agents. A single MCP server providing
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
 - **Zero config** — No API keys required. Works out of the box with free public APIs
 - **Read-only** — No transaction execution. Zero risk of fund loss
-- **Built-in fallbacks** — Embedded token/signature/label databases for offline operation
+- **Dual mode** — CLI for direct terminal use, MCP server for AI agent integration
 
 ## Quick Start
+
+### CLI
+
+```bash
+npx evmscope price ETH
+npx evmscope gas
+npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope portfolio 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope compare-gas
+npx evmscope tvl Aave
+npx evmscope swap ETH USDC 1.0
+npx evmscope block latest
+npx evmscope transfers 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+npx evmscope honeypot 0x...
+```
+
+Run `npx evmscope --help` to see all 22 commands. Add `--json` for raw JSON output.
+
+### MCP Server
+
+Start as an MCP server (no arguments):
 
 ```bash
 npx evmscope
 ```
 
-### CLI Mode
-
-Use evmscope directly from your terminal — no AI client needed:
+### Claude Code
 
 ```bash
-npx evmscope price ETH
-npx evmscope compare-gas
-npx evmscope tvl Aave
-npx evmscope swap ETH USDC 1.0
-npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+claude mcp add evmscope -- npx -y evmscope
 ```
-
-Run `npx evmscope --help` to see all commands. Add `--json` for raw JSON output.
 
 ### Claude Desktop
 
