@@ -34,6 +34,9 @@ export function getClient(chain: SupportedChain = "ethereum"): PublicClient {
 
     // 체인별 환경변수 → 공통 환경변수 → 기본값 순서
     const envUrl = process.env[RPC_ENV_KEYS[chain]] || process.env.EVMSCOPE_RPC_URL;
+    if (envUrl && !isValidRpcUrl(envUrl)) {
+      console.error(`[evmscope] Invalid RPC URL ignored for ${chain}, falling back to default`);
+    }
     const rpcUrl = envUrl && isValidRpcUrl(envUrl) ? envUrl : config.rpcUrl;
 
     clients.set(
