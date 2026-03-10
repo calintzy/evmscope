@@ -1,6 +1,7 @@
 {
   "name": "evmscope",
-  "version": "1.5.1",
+  "version": "1.5.2",
+  "mcpName": "io.github.calintzy/evmscope",
   "description": "EVM blockchain intelligence toolkit for AI agents (MCP server)",
   "keywords": [
     "mcp",
