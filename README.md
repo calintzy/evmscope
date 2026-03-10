@@ -2,14 +2,14 @@
 
 [한국어](README-ko.md) | [中文](README-zh.md) | [日本語](README-ja.md)
 
-EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 20 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, and more.
+EVM blockchain intelligence toolkit for AI agents. A single MCP server providing 23 tools for token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, and more.
 
 > "AgentKit executes. evmscope decides."
 
 ## Features
 
-- **20 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID
-- **5 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism
+- **23 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID, NFT info, NFT metadata, governance proposals
+- **7 EVM chains** — Ethereum, Polygon, Arbitrum, Base, Optimism, Avalanche, BSC
 - **49 built-in tokens** — ETH, USDC, USDT, WETH, LINK, UNI, AAVE, ARB, OP, PEPE, and more
 - **30+ labeled addresses** — Exchanges, DeFi protocols, bridges, whale wallets
 - **Zero config** — No API keys required. Works out of the box with free public APIs
@@ -278,7 +278,7 @@ Identify an address — exchange, DeFi protocol, whale wallet, or EOA.
 
 ### compareGas
 
-Compare gas fees across all 5 EVM chains at once, sorted by lowest cost.
+Compare gas fees across all 7 EVM chains at once, sorted by lowest cost.
 
 ```json
 // Input
@@ -520,6 +520,87 @@ Get cross-chain bridge routes via LI.FI. Compares fees, time, and output amount.
 }
 ```
 
+### getNFTInfo
+
+Get ERC-721 NFT balance and token list for a wallet.
+
+```json
+// Input
+{ "address": "0xd8dA...", "contractAddress": "0x...", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "chain": "ethereum",
+    "contractAddress": "0x...",
+    "owner": "0xd8dA...",
+    "totalBalance": 3,
+    "nfts": [
+      { "tokenId": "1234", "tokenURI": "ipfs://..." }
+    ]
+  }
+}
+```
+
+### getNFTMetadata
+
+Get metadata for a specific NFT token (name, image, attributes).
+
+```json
+// Input
+{ "contractAddress": "0x...", "tokenId": "1234", "chain": "ethereum" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "contractAddress": "0x...",
+    "tokenId": "1234",
+    "tokenURI": "ipfs://...",
+    "metadata": {
+      "name": "Cool NFT #1234",
+      "description": "A very cool NFT",
+      "image": "ipfs://...",
+      "attributes": [
+        { "trait_type": "Background", "value": "Blue" }
+      ]
+    }
+  }
+}
+```
+
+### getGovernanceProposals
+
+Get governance proposals from Snapshot (active, closed, or all).
+
+```json
+// Input
+{ "protocol": "uniswap", "state": "active" }
+
+// Output
+{
+  "success": true,
+  "data": {
+    "space": "uniswapgovernance.eth",
+    "state": "active",
+    "proposals": [
+      {
+        "title": "Proposal Title",
+        "state": "active",
+        "author": "0x1234...",
+        "start": "2025-01-01",
+        "end": "2025-01-07",
+        "votes": 1500,
+        "quorum": 1000,
+        "choices": ["For", "Against"],
+        "scores": [75.5, 24.5]
+      }
+    ]
+  }
+}
+```
+
 ## Supported Chains
 
 | Chain | Chain ID | Native Token |
@@ -529,6 +610,8 @@ Get cross-chain bridge routes via LI.FI. Compares fees, time, and output amount.
 | Arbitrum | 42161 | ETH |
 | Base | 8453 | ETH |
 | Optimism | 10 | ETH |
+| Avalanche | 43114 | AVAX |
+| BSC | 56 | BNB |
 
 ## Environment Variables (Optional)
 
@@ -542,12 +625,16 @@ All environment variables are optional. evmscope works without any configuration
 | `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum-specific RPC endpoint | Falls back to RPC_URL |
 | `EVMSCOPE_RPC_URL_BASE` | Base-specific RPC endpoint | Falls back to RPC_URL |
 | `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_AVALANCHE` | Avalanche-specific RPC endpoint | Falls back to RPC_URL |
+| `EVMSCOPE_RPC_URL_BSC` | BSC-specific RPC endpoint | Falls back to RPC_URL |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API key (higher rate limits) | Free tier |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API key (higher rate limits) | Free tier |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan API key | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API key | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_SNOWTRACE_KEY` | Snowtrace API key (Avalanche) | Falls back to ETHERSCAN_KEY |
+| `EVMSCOPE_BSCSCAN_KEY` | BscScan API key (BSC) | Falls back to ETHERSCAN_KEY |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API key (token holders) | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI API key (bridge routes) | Public access |
 | `EVMSCOPE_DEBUG` | Enable debug logging (set to `1`) | Disabled |
@@ -568,6 +655,7 @@ All environment variables are optional. evmscope works without any configuration
 - **v1.0** (done) — +5 tools: compareGas, getApprovalStatus, getProtocolTVL, getWhaleMovements, getSwapQuote
 - **v1.5** (done) — +6 tools: simulateTx, getYieldRates, getTokenHolders, getContractEvents, checkHoneypot, getBridgeRoutes
 - **v1.5.1** (done) — Code quality + security refactoring: 7 new shared modules, per-chain RPC URLs, cache size limits, unified address validation, CLI modularization
+- **v1.6.0** (done) — +3 tools: getNFTInfo, getNFTMetadata, getGovernanceProposals. +2 chains: Avalanche, BSC
 
 ## License
 

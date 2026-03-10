@@ -15,6 +15,8 @@ import { cmdHolders } from "./cli/commands/holders.js";
 import { cmdSimulate } from "./cli/commands/simulate.js";
 import { cmdHoneypot } from "./cli/commands/honeypot.js";
 import { cmdBridge } from "./cli/commands/bridge.js";
+import { cmdNFT, cmdNFTMetadata } from "./cli/commands/nft.js";
+import { cmdGovernance } from "./cli/commands/governance.js";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -96,6 +98,18 @@ async function main() {
       case "bridge":
         if (rest.length < 4) { console.error("Usage: evmscope bridge <fromChain> <toChain> <token> <amount>"); process.exit(1); }
         await cmdBridge(parseChain(rest[0]), parseChain(rest[1]), rest[2], rest[3], jsonFlag);
+        break;
+      case "nft":
+        if (!rest[0] || !rest[1]) { console.error("Usage: evmscope nft <address> <contractAddress> [chain]"); process.exit(1); }
+        await cmdNFT(rest[0], rest[1], parseChain(rest[2]), jsonFlag);
+        break;
+      case "nft-metadata":
+        if (!rest[0] || !rest[1]) { console.error("Usage: evmscope nft-metadata <contractAddress> <tokenId> [chain]"); process.exit(1); }
+        await cmdNFTMetadata(rest[0], rest[1], parseChain(rest[2]), jsonFlag);
+        break;
+      case "governance":
+        if (!rest[0]) { console.error("Usage: evmscope governance <protocol> [state]"); process.exit(1); }
+        await cmdGovernance(rest[0], rest[1] ?? "active", jsonFlag);
         break;
       default:
         console.error(`Unknown command: ${cmd}`);

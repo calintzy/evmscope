@@ -12,7 +12,7 @@ Usage:
 Commands:
   price <token> [chain]                 Token price (USD, 24h change)
   gas [chain]                           Gas price (slow/normal/fast)
-  compare-gas                           Compare gas across all 5 chains
+  compare-gas                           Compare gas across all 7 chains
   balance <address> [chain]             Wallet balance (native + tokens)
   token-info <token> [chain]            ERC-20 token metadata
   ens <name-or-address>                 Resolve ENS name/address
@@ -26,6 +26,9 @@ Commands:
   simulate <from> <to> [data] [chain]   Simulate transaction
   honeypot <token> [chain]              Honeypot token detection
   bridge <fromChain> <toChain> <token> <amount>  Cross-chain bridge routes
+  nft <address> <contract> [chain]    NFT balance and token list
+  nft-metadata <contract> <tokenId> [chain]  NFT metadata lookup
+  governance <protocol> [state]       Governance proposals (Snapshot)
 
 Options:
   --json                                Output raw JSON

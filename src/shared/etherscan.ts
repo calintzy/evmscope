@@ -10,6 +10,8 @@ const EXPLORER_API_URLS: Record<string, string> = {
   arbitrum: "https://api.arbiscan.io/api",
   base: "https://api.basescan.org/api",
   optimism: "https://api-optimistic.etherscan.io/api",
+  avalanche: "https://api.snowtrace.io/api",
+  bsc: "https://api.bscscan.com/api",
 };
 
 const ABI_CACHE_TTL = 86400; // 24시간
@@ -21,6 +23,8 @@ function getApiKey(chain: SupportedChain): string | undefined {
     arbitrum: "EVMSCOPE_ARBISCAN_KEY",
     base: "EVMSCOPE_BASESCAN_KEY",
     optimism: "EVMSCOPE_OPTIMISTIC_KEY",
+    avalanche: "EVMSCOPE_SNOWTRACE_KEY",
+    bsc: "EVMSCOPE_BSCSCAN_KEY",
   };
   return process.env[keyMap[chain]] || process.env.EVMSCOPE_ETHERSCAN_KEY;
 }

@@ -58,5 +58,29 @@
       "decimals": 18,
       "coingeckoId": "ethereum"
     }
+  },
+  "avalanche": {
+    "id": 43114,
+    "name": "avalanche",
+    "rpcUrl": "https://api.avax.network/ext/bc/C/rpc",
+    "explorerUrl": "https://snowtrace.io",
+    "nativeCurrency": {
+      "name": "Avalanche",
+      "symbol": "AVAX",
+      "decimals": 18,
+      "coingeckoId": "avalanche-2"
+    }
+  },
+  "bsc": {
+    "id": 56,
+    "name": "bsc",
+    "rpcUrl": "https://bsc-dataseed.binance.org",
+    "explorerUrl": "https://bscscan.com",
+    "nativeCurrency": {
+      "name": "BNB",
+      "symbol": "BNB",
+      "decimals": 18,
+      "coingeckoId": "binancecoin"
+    }
   }
 }

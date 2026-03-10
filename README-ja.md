@@ -1,13 +1,13 @@
 # evmscope
 
-AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TX シミュレーションなど20のツールを提供する単一MCPサーバー。
+AIエージェント向けEVMブロックチェーンインテリジェンスツールキット。トークン価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TXシミュレーション、NFT照会、ガバナンス提案など23のツールを提供する単一MCPサーバー。
 
 > 「AgentKitで実行し、evmscopeで判断する。」
 
 ## 特徴
 
-- **20のツール** — 価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TXシミュレーション、イベントログ、トークンホルダー、承認状態、TVL、クジラ追跡、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別
-- **5つのEVMチェーン** — Ethereum、Polygon、Arbitrum、Base、Optimism
+- **23のツール** — 価格、Gas比較、スワップ見積もり、DeFi利回り、ハニーポット検出、ブリッジルート、TXシミュレーション、イベントログ、トークンホルダー、承認状態、TVL、クジラ追跡、残高、トークン情報、ENS、TX状態、TX解析、ABI照会、アドレス識別、NFT情報、NFTメタデータ、ガバナンス提案
+- **7つのEVMチェーン** — Ethereum、Polygon、Arbitrum、Base、Optimism、Avalanche、BSC
 - **49の内蔵トークン** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPEなど
 - **30以上のラベル付きアドレス** — 取引所、DeFiプロトコル、ブリッジ、クジラウォレット
 - **ゼロ設定** — APIキー不要。無料パブリックAPIで即座に動作
@@ -276,7 +276,7 @@ ENS名とアドレスを双方向で解決します（Ethereumメインネット
 
 ### compareGas
 
-5つのEVMチェーンのGas料金を一度に比較します。最安順にソート。
+7つのEVMチェーンのGas料金を一度に比較します。最安順にソート。
 
 ```json
 // 入力
@@ -457,6 +457,87 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 { "success": true, "data": { "routes": [{ "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "amountOut": "99.50" }], "bestRoute": { "bridge": "Stargate" } } }
 ```
 
+### getNFTInfo
+
+ウォレットのERC-721 NFT残高とトークンリストを照会します。
+
+```json
+// 入力
+{ "address": "0xd8dA...", "contractAddress": "0x...", "chain": "ethereum" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "chain": "ethereum",
+    "contractAddress": "0x...",
+    "owner": "0xd8dA...",
+    "totalBalance": 3,
+    "nfts": [
+      { "tokenId": "1234", "tokenURI": "ipfs://..." }
+    ]
+  }
+}
+```
+
+### getNFTMetadata
+
+特定NFTトークンのメタデータ（名前、画像、属性）を照会します。
+
+```json
+// 入力
+{ "contractAddress": "0x...", "tokenId": "1234", "chain": "ethereum" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "contractAddress": "0x...",
+    "tokenId": "1234",
+    "tokenURI": "ipfs://...",
+    "metadata": {
+      "name": "Cool NFT #1234",
+      "description": "A very cool NFT",
+      "image": "ipfs://...",
+      "attributes": [
+        { "trait_type": "Background", "value": "Blue" }
+      ]
+    }
+  }
+}
+```
+
+### getGovernanceProposals
+
+Snapshotベースのガバナンス提案を照会します（active/closed/all）。
+
+```json
+// 入力
+{ "protocol": "uniswap", "state": "active" }
+
+// 出力
+{
+  "success": true,
+  "data": {
+    "space": "uniswapgovernance.eth",
+    "state": "active",
+    "proposals": [
+      {
+        "title": "Proposal Title",
+        "state": "active",
+        "author": "0x1234...",
+        "start": "2025-01-01",
+        "end": "2025-01-07",
+        "votes": 1500,
+        "quorum": 1000,
+        "choices": ["For", "Against"],
+        "scores": [75.5, 24.5]
+      }
+    ]
+  }
+}
+```
+
 ## サポートチェーン
 
 | チェーン | Chain ID | ネイティブトークン |
@@ -466,6 +547,8 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 | Arbitrum | 42161 | ETH |
 | Base | 8453 | ETH |
 | Optimism | 10 | ETH |
+| Avalanche | 43114 | AVAX |
+| BSC | 56 | BNB |
 
 ## 環境変数（オプション）
 
@@ -479,12 +562,16 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 | `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum専用RPCエンドポイント | RPC_URLにフォールバック |
 | `EVMSCOPE_RPC_URL_BASE` | Base専用RPCエンドポイント | RPC_URLにフォールバック |
 | `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_AVALANCHE` | Avalanche専用RPCエンドポイント | RPC_URLにフォールバック |
+| `EVMSCOPE_RPC_URL_BSC` | BSC専用RPCエンドポイント | RPC_URLにフォールバック |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko APIキー（高レート制限） | 無料枠 |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan APIキー（高レート制限） | 無料枠 |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan APIキー | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan APIキー | ETHERSCAN_KEYにフォールバック |
+| `EVMSCOPE_SNOWTRACE_KEY` | Snowtrace APIキー（Avalanche） | ETHERSCAN_KEYにフォールバック |
+| `EVMSCOPE_BSCSCAN_KEY` | BscScan APIキー（BSC） | ETHERSCAN_KEYにフォールバック |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer APIキー（トークンホルダー） | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI APIキー（ブリッジルート） | パブリックアクセス |
 | `EVMSCOPE_DEBUG` | デバッグログ有効化（`1`に設定） | 無効 |
@@ -505,6 +592,7 @@ DeFi利回り（APY）を照会します（DefiLlama基盤、プロトコル/チ
 - **v1.0**（完了）— +5つのツール：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
 - **v1.5**（完了）— +6つのツール：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 - **v1.5.1**（完了）— コード品質 + セキュリティリファクタリング：7つの新共有モジュール、チェーン別RPC URL、キャッシュサイズ制限、統一アドレス検証、CLIモジュール化
+- **v1.6.0**（完了）— +3つのツール：getNFTInfo、getNFTMetadata、getGovernanceProposals。+2つのチェーン：Avalanche、BSC
 
 ## ライセンス
 

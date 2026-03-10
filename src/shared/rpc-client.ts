@@ -1,5 +1,5 @@
 import { createPublicClient, http, type PublicClient, type Chain } from "viem";
-import { mainnet, polygon, arbitrum, base, optimism } from "viem/chains";
+import { mainnet, polygon, arbitrum, base, optimism, avalanche, bsc } from "viem/chains";
 import type { SupportedChain } from "../types.js";
 import { chains } from "./chains.js";
 
@@ -9,6 +9,8 @@ const viemChainMap: Record<SupportedChain, Chain> = {
   arbitrum: arbitrum,
   base: base,
   optimism: optimism,
+  avalanche: avalanche,
+  bsc: bsc,
 };
 
 // 체인별 RPC URL 환경변수 매핑 (CRITICAL #1: 체인별 분리)
@@ -18,6 +20,8 @@ const RPC_ENV_KEYS: Record<SupportedChain, string> = {
   arbitrum: "EVMSCOPE_RPC_URL_ARBITRUM",
   base: "EVMSCOPE_RPC_URL_BASE",
   optimism: "EVMSCOPE_RPC_URL_OPTIMISM",
+  avalanche: "EVMSCOPE_RPC_URL_AVALANCHE",
+  bsc: "EVMSCOPE_RPC_URL_BSC",
 };
 
 const clients = new Map<string, PublicClient>();

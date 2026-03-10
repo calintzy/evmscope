@@ -1,4 +1,4 @@
-export const SUPPORTED_CHAINS = ["ethereum", "polygon", "arbitrum", "base", "optimism"] as const;
+export const SUPPORTED_CHAINS = ["ethereum", "polygon", "arbitrum", "base", "optimism", "avalanche", "bsc"] as const;
 export type SupportedChain = typeof SUPPORTED_CHAINS[number];
 
 export interface ChainConfig {

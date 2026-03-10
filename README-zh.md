@@ -1,13 +1,13 @@
 # evmscope
 
-面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟等 20 个工具。
+面向 AI 代理的 EVM 区块链智能工具包。单一 MCP 服务器提供代币价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、NFT 查询、治理提案等 23 个工具。
 
 > "用 AgentKit 执行，用 evmscope 决策。"
 
 ## 特性
 
-- **20 个工具** — 价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、事件日志、代币持有者、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别
-- **5 条 EVM 链** — Ethereum、Polygon、Arbitrum、Base、Optimism
+- **23 个工具** — 价格、Gas 对比、兑换报价、DeFi 收益率、蜜罐检测、跨链桥路线、交易模拟、事件日志、代币持有者、授权状态、TVL、巨鲸追踪、余额、代币信息、ENS、交易状态、交易解析、ABI 查询、地址识别、NFT 信息、NFT 元数据、治理提案
+- **7 条 EVM 链** — Ethereum、Polygon、Arbitrum、Base、Optimism、Avalanche、BSC
 - **49 个内置代币** — ETH、USDC、USDT、WETH、LINK、UNI、AAVE、ARB、OP、PEPE 等
 - **30+ 标记地址** — 交易所、DeFi 协议、跨链桥、巨鲸钱包
 - **零配置** — 无需 API 密钥，使用免费公共 API 即刻运行
@@ -276,7 +276,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 
 ### compareGas
 
-一次对比所有 5 条 EVM 链的 Gas 费用，按最低成本排序。
+一次对比所有 7 条 EVM 链的 Gas 费用，按最低成本排序。
 
 ```json
 // 输入
@@ -457,6 +457,87 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 { "success": true, "data": { "routes": [{ "bridge": "Stargate", "estimatedTime": 60, "feeUsd": 0.50, "amountOut": "99.50" }], "bestRoute": { "bridge": "Stargate" } } }
 ```
 
+### getNFTInfo
+
+查询钱包的 ERC-721 NFT 余额和代币列表。
+
+```json
+// 输入
+{ "address": "0xd8dA...", "contractAddress": "0x...", "chain": "ethereum" }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "chain": "ethereum",
+    "contractAddress": "0x...",
+    "owner": "0xd8dA...",
+    "totalBalance": 3,
+    "nfts": [
+      { "tokenId": "1234", "tokenURI": "ipfs://..." }
+    ]
+  }
+}
+```
+
+### getNFTMetadata
+
+查询特定 NFT 代币的元数据（名称、图片、属性）。
+
+```json
+// 输入
+{ "contractAddress": "0x...", "tokenId": "1234", "chain": "ethereum" }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "contractAddress": "0x...",
+    "tokenId": "1234",
+    "tokenURI": "ipfs://...",
+    "metadata": {
+      "name": "Cool NFT #1234",
+      "description": "A very cool NFT",
+      "image": "ipfs://...",
+      "attributes": [
+        { "trait_type": "Background", "value": "Blue" }
+      ]
+    }
+  }
+}
+```
+
+### getGovernanceProposals
+
+查询 Snapshot 治理提案（active/closed/all）。
+
+```json
+// 输入
+{ "protocol": "uniswap", "state": "active" }
+
+// 输出
+{
+  "success": true,
+  "data": {
+    "space": "uniswapgovernance.eth",
+    "state": "active",
+    "proposals": [
+      {
+        "title": "Proposal Title",
+        "state": "active",
+        "author": "0x1234...",
+        "start": "2025-01-01",
+        "end": "2025-01-07",
+        "votes": 1500,
+        "quorum": 1000,
+        "choices": ["For", "Against"],
+        "scores": [75.5, 24.5]
+      }
+    ]
+  }
+}
+```
+
 ## 支持的链
 
 | 链 | Chain ID | 原生代币 |
@@ -466,6 +547,8 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 | Arbitrum | 42161 | ETH |
 | Base | 8453 | ETH |
 | Optimism | 10 | ETH |
+| Avalanche | 43114 | AVAX |
+| BSC | 56 | BNB |
 
 ## 环境变量（可选）
 
@@ -479,12 +562,16 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 | `EVMSCOPE_RPC_URL_ARBITRUM` | Arbitrum 专用 RPC 端点 | 回退至 RPC_URL |
 | `EVMSCOPE_RPC_URL_BASE` | Base 专用 RPC 端点 | 回退至 RPC_URL |
 | `EVMSCOPE_RPC_URL_OPTIMISM` | Optimism 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_AVALANCHE` | Avalanche 专用 RPC 端点 | 回退至 RPC_URL |
+| `EVMSCOPE_RPC_URL_BSC` | BSC 专用 RPC 端点 | 回退至 RPC_URL |
 | `EVMSCOPE_COINGECKO_KEY` | CoinGecko API 密钥（更高速率限制） | 免费层 |
 | `EVMSCOPE_ETHERSCAN_KEY` | Etherscan API 密钥（更高速率限制） | 免费层 |
 | `EVMSCOPE_POLYGONSCAN_KEY` | Polygonscan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_ARBISCAN_KEY` | Arbiscan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_BASESCAN_KEY` | Basescan API 密钥 | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_OPTIMISTIC_KEY` | Optimistic Etherscan API 密钥 | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_SNOWTRACE_KEY` | Snowtrace API 密钥（Avalanche） | 回退至 ETHERSCAN_KEY |
+| `EVMSCOPE_BSCSCAN_KEY` | BscScan API 密钥（BSC） | 回退至 ETHERSCAN_KEY |
 | `EVMSCOPE_ETHPLORER_KEY` | Ethplorer API 密钥（代币持有者） | `freekey` |
 | `EVMSCOPE_LIFI_KEY` | LI.FI API 密钥（跨链桥路线） | 公共访问 |
 | `EVMSCOPE_DEBUG` | 启用调试日志（设为 `1`） | 禁用 |
@@ -505,6 +592,7 @@ npx evmscope balance 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
 - **v1.0**（已完成）— +5 个工具：compareGas、getApprovalStatus、getProtocolTVL、getWhaleMovements、getSwapQuote
 - **v1.5**（已完成）— +6 个工具：simulateTx、getYieldRates、getTokenHolders、getContractEvents、checkHoneypot、getBridgeRoutes
 - **v1.5.1**（已完成）— 代码质量 + 安全重构：7 个新共享模块、链级 RPC URL、缓存大小限制、统一地址验证、CLI 模块化
+- **v1.6.0**（已完成）— +3 个工具：getNFTInfo、getNFTMetadata、getGovernanceProposals。+2 条链：Avalanche、BSC
 
 ## 许可证
 

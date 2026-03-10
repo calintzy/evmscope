@@ -21,6 +21,9 @@ import { register as registerGetTokenHolders } from "./tools/getTokenHolders.js"
 import { register as registerSimulateTx } from "./tools/simulateTx.js";
 import { register as registerCheckHoneypot } from "./tools/checkHoneypot.js";
 import { register as registerGetBridgeRoutes } from "./tools/getBridgeRoutes.js";
+import { register as registerGetNFTInfo } from "./tools/getNFTInfo.js";
+import { register as registerGetNFTMetadata } from "./tools/getNFTMetadata.js";
+import { register as registerGetGovernanceProposals } from "./tools/getGovernanceProposals.js";
 import { VERSION } from "./shared/constants.js";
 
 const server = new McpServer({
@@ -55,6 +58,11 @@ registerGetTokenHolders(server);
 registerSimulateTx(server);
 registerCheckHoneypot(server);
 registerGetBridgeRoutes(server);
+
+// Phase 5 (v1.6)
+registerGetNFTInfo(server);
+registerGetNFTMetadata(server);
+registerGetGovernanceProposals(server);
 
 async function main() {
   const transport = new StdioServerTransport();
