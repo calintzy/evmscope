@@ -4,6 +4,20 @@
 
 EVM blockchain intelligence toolkit. 26 tools across 7 chains — use as a CLI or MCP server. Token prices, gas comparison, swap quotes, yield rates, honeypot detection, bridge routes, tx simulation, NFT lookup, governance proposals, portfolio tracking, and more.
 
+## Why evmscope?
+
+AI agents like Claude and GPT cannot access real-time blockchain data. Ask "What's the ETH price?" or "Show me this wallet's balance" and you'll get "I can't access real-time data."
+
+evmscope solves this by giving AI agents direct access to 26 on-chain tools via the MCP protocol — token prices, wallet balances, DeFi yields, whale tracking, honeypot detection, and more. No API keys, no setup, just connect and go.
+
+## Who is it for?
+
+| User | Use Case |
+|------|----------|
+| **AI agent developers** | Connect as MCP server to give AI on-chain analysis capabilities |
+| **Crypto traders & researchers** | Query tokens, wallets, and protocols directly from the terminal |
+| **DeFi users** | Safety tools — honeypot detection, approval status checks, whale tracking |
+
 ## Features
 
 - **26 tools** — Price, gas compare, swap quote, yield rates, honeypot detection, bridge routes, tx simulation, event logs, token holders, approval status, TVL, whale tracking, balance, token info, ENS, tx status, tx decode, ABI lookup, address ID, NFT info, NFT metadata, governance proposals, block info, token transfers, portfolio

@@ -4,6 +4,20 @@
 
 Kit de inteligencia para blockchain EVM. 26 herramientas en 7 cadenas — úselo como CLI o servidor MCP. Precio del token, comparación de gas, cotización de swap, tasas de rendimiento, detección de honeypot, rutas de puente, simulación de transacciones, consulta de NFT, propuestas de gobernanza, seguimiento de portafolio, y más.
 
+## ¿Por qué evmscope?
+
+Los agentes de IA como Claude y GPT no pueden acceder a datos de blockchain en tiempo real. Pregunta "¿Cuál es el precio de ETH?" o "Muéstrame el saldo de esta cartera" y obtendrás "No puedo acceder a datos en tiempo real."
+
+evmscope resuelve esto dando a los agentes de IA acceso directo a 26 herramientas on-chain a través del protocolo MCP — precios de tokens, saldos de carteras, rendimientos DeFi, seguimiento de ballenas, detección de honeypot, y más. Sin claves API, sin configuración, solo conecta y listo.
+
+## ¿Para quién es?
+
+| Usuario | Caso de Uso |
+|---------|-------------|
+| **Desarrolladores de agentes IA** | Conectar como servidor MCP para dar a la IA capacidades de análisis on-chain |
+| **Traders e investigadores crypto** | Consultar tokens, carteras y protocolos directamente desde la terminal |
+| **Usuarios DeFi** | Herramientas de seguridad — detección de honeypot, verificación de aprobaciones, seguimiento de ballenas |
+
 ## Características
 
 - **26 herramientas** — Precio, comparación de gas, cotización de swap, tasas de rendimiento, detección de honeypot, rutas de puente, simulación de transacciones, registros de eventos, poseedores de tokens, estado de aprobación, TVL, seguimiento de ballenas, saldo, información de token, ENS, estado de transacción, decodificación de transacción, consulta de ABI, identificación de dirección, información de NFT, metadatos de NFT, propuestas de gobernanza, información de bloque, transferencias de tokens, portafolio
